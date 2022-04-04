@@ -3,7 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { SmsModule } from '../sms/sms.module';
-
+require('dotenv').config()
 @Module({
   imports: [
     JwtModule.register({
