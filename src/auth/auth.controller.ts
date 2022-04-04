@@ -23,8 +23,7 @@ export class AuthController {
     if (response.message) {
       throw new HttpException(response.message, response.status);
     }
-    const sms = await this.smsService.createSms(data.phone)
-    console.log(sms);
+    await this.smsService.createSms(data.phone)
     res.cookie('refreshToken', response.refresh_token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     return response;
   }
