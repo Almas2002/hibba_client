@@ -1,6 +1,6 @@
 server{
      listen 80;
-     server_name:164.92.164.203;
+     server_name 164.92.164.203;
      location / {
         proxy_pass http://api:3000;
         proxy_set_header        X-Real-IP       $remote_addr;
