@@ -1,4 +1,7 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class LikeProfileDto {
-  id:number
-  profileId:number
+  userId: number;
+  @ApiProperty({ example: '1', description: 'айди которого хотите лайкнуть' })
+  profileId: number;
 }

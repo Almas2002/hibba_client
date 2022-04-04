@@ -25,7 +25,10 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { UserService } from './user.service';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { UpdateAvatarDto } from './dto/update-avatar.dto';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { CreateGenderDto } from './dto/create-gender.dto';
 
+@ApiTags('Пользователь')
 @Controller('user')
 export class UserController {
   constructor(@Inject('USER_SERVICE') private client: ClientProxy,
@@ -35,6 +38,9 @@ export class UserController {
   @Role('ADMIN')
   @UseGuards(RoleGuards)
   @Post('create-gender')
+  @ApiBody({
+    type:CreateGenderDto,
+  })
   async createGender(@Body('value')value: string) {
     const cmd = { cmd: 'create-gender' };
     return await this.client.send(cmd, { value }).toPromise();
@@ -102,8 +108,10 @@ export class UserController {
     return await this.client.send(cmd, data).toPromise();
   }
 
+  @UseGuards(AuthGuard)
   @Post('like-profile')
-  async likeProfile(@Body()dto: LikeProfileDto) {
+  async likeProfile(@Body()dto: LikeProfileDto, @UserDecorator('id')id: number) {
+    dto.userId = id;
     const cmd = { cmd: 'like-profile' };
     return await this.client.send(cmd, dto).toPromise();
   }

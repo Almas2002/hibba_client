@@ -3,7 +3,9 @@ import { UserLoginDto } from './dto/user-login.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { SmsService } from '../sms/sms.service';
 import { IpAddress } from '../decorators/ip.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Авторизация")
 @Controller('auth')
 export class AuthController {
   constructor(@Inject('AUTH_SERVICE') private client: ClientProxy,private smsService:SmsService) {}

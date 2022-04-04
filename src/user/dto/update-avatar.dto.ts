@@ -1,3 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class UpdateAvatarDto {
-  imageId:number
+  @ApiProperty({ description: 'айди фотографий', example: '1' })
+  imageId: number;
 }
