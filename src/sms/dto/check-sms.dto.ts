@@ -1,0 +1,8 @@
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CheckSmsDto {
+  @ApiProperty({example:"87478015254",description:"телефон номер"})
+  phone:string
+  @ApiProperty({example:"2225",description:"смс код"})
+  code:string
+}
