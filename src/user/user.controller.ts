@@ -27,6 +27,7 @@ import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express
 import { UpdateAvatarDto } from './dto/update-avatar.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { CreateGenderDto } from './dto/create-gender.dto';
+import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
 
 @ApiTags('Пользователь')
 @Controller('user')
@@ -34,12 +35,11 @@ export class UserController {
   constructor(@Inject('USER_SERVICE') private client: ClientProxy,
               private userService: UserService) {
   }
-
   @Role('ADMIN')
   @UseGuards(RoleGuards)
   @Post('create-gender')
   @ApiBody({
-    type:CreateGenderDto,
+    type: CreateGenderDto,
   })
   async createGender(@Body('value')value: string) {
     const cmd = { cmd: 'create-gender' };
@@ -82,11 +82,11 @@ export class UserController {
     return await this.client.send(cmd, genderId).toPromise();
   }
 
+  @ApiImplicitFile({ name: 'file', description: 'аватар можно добавить 7 фотографий' })
   @UseInterceptors(FileFieldsInterceptor(([{ name: 'file', maxCount: 7 }])))
   @Post('create-profile')
   async createProfile(@Body()profile: CreateProfileDto, @UserDecorator('id')id: number, @UploadedFiles()files: { file: any[] }) {
     profile = { ...profile, userId: id };
-    console.log(profile);
     return this.userService.createProfile(profile, files.file);
   }
 

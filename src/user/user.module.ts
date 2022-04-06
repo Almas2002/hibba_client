@@ -12,7 +12,7 @@ require('dotenv').config()
       name: 'USER_SERVICE',
       transport: Transport.REDIS,
       options: {
-        url: process.env.USER_SERVICE,
+        url: process.env.USER_SERVICE
       }
     },
   ]),AuthModule,FileModule],

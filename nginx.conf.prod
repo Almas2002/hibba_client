@@ -1,4 +1,4 @@
-server{
+server {
      listen 80;
      server_name 164.92.164.203;
      location / {

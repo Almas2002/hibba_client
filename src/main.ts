@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(requestIp.mw());
   app.use(cookieParser());
-  app.useGlobalPipes(new MyValidationPipe());
+  //app.useGlobalPipes(new MyValidationPipe());
   const config = new DocumentBuilder()
     .setTitle('Hibba')
     .setDescription('Documentation for REST API')

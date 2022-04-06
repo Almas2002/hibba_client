@@ -18,4 +18,6 @@ export class CreateProfileDto {
   hobby?: number[];
   @ApiProperty({ example: '1', description: 'id категорий' })
   categoryId: number;
+  @ApiProperty({ example: '1', description: 'id религий' })
+  religionId:number
 }
