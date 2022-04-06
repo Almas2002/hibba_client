@@ -13,7 +13,7 @@ export class SmsService {
     return this.smsService.send(cmd, phone).toPromise();
   }
 
-  async checkSms(dto: CreateSmsDto) {
+  async checkSms(dto: CheckSmsDto) {
     const cmd = { cmd: 'check-code' };
     return this.smsService.send(cmd, dto).toPromise();
   }
