@@ -3,24 +3,21 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { SmsModule } from '../sms/sms.module';
+import { AuthService } from './auth.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Auth } from './auth.entity';
+import { UserModule } from '../user/user.module';
 require('dotenv').config()
 @Module({
   imports: [
+    UserModule,
     JwtModule.register({
       secret: 'hello world',
       signOptions: { expiresIn: '180m' },
     }),
-    ClientsModule.register([
-      {
-        name: 'AUTH_SERVICE',
-        transport: Transport.REDIS,
-        options: {
-          url: process.env.AUTH_SERVICE,
-        },
-      },
-    ]),
-    SmsModule
+    TypeOrmModule.forFeature([Auth])
   ],
+  providers:[AuthService],
   controllers: [AuthController],
   exports: [JwtModule],
 })

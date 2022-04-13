@@ -1,21 +1,15 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SmsController } from './sms.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SmsService } from './sms.service';
+import { AuthModule } from '../auth/auth.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Sms } from './Sms.entity';
+import { FileModule } from '../file/file.module';
 require('dotenv').config()
 @Module({
   controllers:[SmsController],
-  imports:[
-    ClientsModule.register([
-      {
-        name:'SMS_SERVICE',
-        transport:Transport.REDIS,
-        options:{
-          url: process.env.SMS_SERVICE
-        },
-      }
-    ]),
-    ],
+  imports:[,TypeOrmModule.forFeature([Sms])],
   exports:[SmsService],
   providers:[SmsService]
 })

@@ -14,6 +14,21 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf.prod:/etc/nginx/conf.d/nginx.conf.prod
+      - ./nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
     depends_on:
       - api
+  postgres:
+    container_name: postgres
+    image: postgres:12
+    env_file:
+      - .env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:

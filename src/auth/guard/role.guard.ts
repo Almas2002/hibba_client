@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
-import { ROLE_KEY } from '../decorators/role.decorator';
-import { IMyRequestInterface } from '../interface/IMyrequestInterface';
+import { ROLE_KEY } from '../../user/decorators/role.decorator';
+import { IMyRequestInterface } from '../../interface/IMyrequestInterface';
 
 
 @Injectable()

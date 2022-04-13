@@ -1,4 +1,5 @@
-import { IPagination } from './IPagination';
+import { IPagination } from '../profile/interfaces/get-profile-query.interface';
+
 
 export interface GetProfileQueryInterface extends IPagination{
   userId:number;

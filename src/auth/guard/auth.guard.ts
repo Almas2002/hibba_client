@@ -1,5 +1,5 @@
 import {CanActivate, ExecutionContext, Injectable, UnauthorizedException} from "@nestjs/common";
-import { IMyRequestInterface } from '../interface/IMyrequestInterface';
+import { IMyRequestInterface } from '../../interface/IMyrequestInterface';
 
 
 @Injectable()

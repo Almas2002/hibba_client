@@ -1,21 +1,21 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { SmsService } from './sms.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateSmsDto } from './dto/create-sms.dto';
-import { CheckSmsDto } from './dto/check-sms.dto';
+import { CreateSmsDto,CheckSmsDto } from './dto/create-sms.dto';
 
 @ApiTags('SMS')
 @Controller('sms')
 export class SmsController {
-  constructor(private smsService: SmsService) {}
+  constructor(private smsService: SmsService) {
+  }
 
   @Post('check')
   check(@Body()dto: CheckSmsDto) {
-    return this.smsService.checkSms(dto);
+    return this.smsService.checkCode(dto);
   }
 
   @Post('send-code')
   sendCode(@Body()dto: CreateSmsDto) {
-    return this.smsService.createSms(dto.phone);
+    return this.smsService.createSMSPhone(dto.phone );
   }
 }

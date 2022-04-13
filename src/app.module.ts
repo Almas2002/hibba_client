@@ -8,15 +8,26 @@ import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { HobbyModule } from './hobby/hobby.module';
+import { Category } from './category/category.entity';
+import { CategoryModule } from './category/category.module';
+import { ProfileModule } from './profile/profile.module';
+import { RoleModule } from './role/role.module';
+import { ReligionModule } from './religion/religion.module';
+import { GenderModule } from './gender/gender.module';
+import { config } from './ormconfig';
 @Module({
-  imports: [AuthModule,UserModule,FileModule,
+  imports: [
+    TypeOrmModule.forRoot(config)
+    ,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:".env"
     }),
   ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),
-    }),
+    }),AuthModule,UserModule,FileModule,HobbyModule,CategoryModule,ProfileModule,RoleModule,ReligionModule,GenderModule
   ],
   controllers: [],
   providers: [],
