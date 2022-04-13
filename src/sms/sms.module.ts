@@ -4,12 +4,12 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SmsService } from './sms.service';
 import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Sms } from './Sms.entity';
+import { Sms } from './sms.entity';
 import { FileModule } from '../file/file.module';
 require('dotenv').config()
 @Module({
   controllers:[SmsController],
-  imports:[,TypeOrmModule.forFeature([Sms])],
+  imports:[TypeOrmModule.forFeature([Sms])],
   exports:[SmsService],
   providers:[SmsService]
 })

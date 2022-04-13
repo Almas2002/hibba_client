@@ -18,15 +18,14 @@ services:
     depends_on:
       - api
   postgres:
-    container_name: postgres
-    image: postgres:12
+    image: postgres:13.3
     environment:
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_USER: postgres
-      POSTGRES_DB: hibba
+      POSTGRES_DB: "hibba"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345"
       PG_DATA: /var/lib/postgresql/data
     ports:
-    - "5432:5432"
+       - "5432:5432"
     volumes:
     - pgdata:/var/lib/postgresql/data
     restart: always
