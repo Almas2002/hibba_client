@@ -21,7 +21,7 @@ services:
     container_name: postgres
     image: postgres:12
     environment:
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: 12345
       POSTGRES_USER: postgres
       POSTGRES_DB: hibba
       PG_DATA: /var/lib/postgresql/data

@@ -7,7 +7,7 @@ export const config: ConnectionOptions = {
   port: 5432,
   username: 'postgres',
   database: 'hibba',
-  password: '12345',
+  password: 'root',
   // host: process.env.DB_HOST,
   // port: Number(process.env.PORT),
   // username: process.env.DB_USERNAME,
