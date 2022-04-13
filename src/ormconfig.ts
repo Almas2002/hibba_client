@@ -3,11 +3,12 @@ require('dotenv').config()
 
 export const config: ConnectionOptions = {
   type: 'postgres',
-  host: '127.0.0.1',
+  host: process.env.POSTGRES_HOST,
   port: 5432,
-  username: 'postgres',
-  database: 'hibba',
-  password: '12345',
+  username: process.env.POSTGRES_USER,
+  database: process.env.POSTGRESS_DB,
+  password: process.env.POSTGRESS_PASSWORD,
+
   // host: process.env.DB_HOST,
   // port: Number(process.env.PORT),
   // username: process.env.DB_USERNAME,
