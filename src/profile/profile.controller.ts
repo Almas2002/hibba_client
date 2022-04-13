@@ -20,9 +20,10 @@ import { LikeProfileDto } from './dto/like-profile.dto';
 import { UpdateAvatarDto } from './dto/update-avatar.dto';
 import { RemoveImageDto } from './dto/remove-image.dto';
 import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@ApiTags()
+@Controller('profile')
 export class ProfileController {
   constructor(private profileService:ProfileService,private fileService:FileService) {}
   @UseGuards(AuthGuard)

@@ -7,6 +7,7 @@ export interface GetProfileQueryInterface extends IPagination{
   hobby?:boolean
   religion?:boolean
   search?:string
+  regionId?:number
 }
 export interface IPagination {
   limit:number;

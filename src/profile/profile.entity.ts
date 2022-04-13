@@ -16,6 +16,7 @@ import { BaseEntity } from '../baseEntity';
 import { Religion } from '../religion/religion.entity';
 import { ProfilePhotos } from './profile-photos.entity';
 import { User } from '../user/user.entity';
+import { Region } from '../region/region.entity';
 
 
 @Entity()
@@ -27,8 +28,6 @@ export class Profile extends BaseEntity {
   user: User;
   @Column()
   description: string;
-  @Column()
-  region: string;
   @Column()
   age: number;
   @Column()
@@ -67,5 +66,6 @@ export class Profile extends BaseEntity {
   @OneToMany(()=>ProfilePhotos,photo=>photo.profile)
   photos:ProfilePhotos[]
 
-
+  @ManyToOne(()=>Region,region=>region.profiles)
+  region:Region
 }

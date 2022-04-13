@@ -1,9 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { HobbyService } from './hobby.service';
 import { CreateHobbyDto, updateHobby } from './dto/create-hobby.dto';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@ApiTags('hobby')
+@Controller('hobby')
 export class HobbyController {
   constructor(private hobbyService: HobbyService) {
   }

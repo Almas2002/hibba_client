@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { ComplaintService } from './complaint.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { UserDecorator } from '../user/decorators/user.decorator';
-
-@Controller()
+@ApiTags('complaint')
+@Controller('complaint')
 export class ComplaintController {
   constructor(private complaintService:ComplaintService) {}
   @ApiOperation({summary:"login пользователя"})

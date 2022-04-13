@@ -12,36 +12,40 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { AddImagesDto } from './dto/add-images.dto';
 import { RemoveImageDto } from './dto/remove-image.dto';
 import { FileService } from '../file/file.service';
+import { Region } from '../region/region.entity';
 
 @Injectable()
 export class ProfileService {
   constructor(@InjectRepository(Profile) private profileRepository: Repository<Profile>,
               @InjectRepository(Like) private likeRepository: Repository<Like>
-    , private hobbyService: HobbyService, @InjectRepository(ProfilePhotos) private profilePhotosRepository: Repository<ProfilePhotos>,private fileService:FileService) {
+    , private hobbyService: HobbyService, @InjectRepository(ProfilePhotos) private profilePhotosRepository: Repository<ProfilePhotos>, private fileService: FileService) {
   }
 
-  async createProfile(data: CreateProfileDto,file:any[]) {
-    const images:string[] = []
+  async createProfile(data: CreateProfileDto, file: any[]) {
+    const images: string[] = [];
     const profile = await this.profileRepository.save({
-      ...data.profile,
-      gender: { id: data.profile.genderId },
-      category: { id: data.profile.categoryId },
-      religion: { id: data.profile.religionId },
+      ...data,
+      region: { id: data.regionId },
+      gender: { id: data.genderId },
+      category: { id: data.categoryId },
+      religion: { id: data.religionId },
     });
-    for (const f of file){
-         images.push( await this.fileService.createFile(f))
+    if (file.length) {
+      for (const f of file) {
+        images.push(await this.fileService.createFile(f));
+      }
     }
     let hobby;
     profile.hobbies = [];
-    if (data.profile.hobby?.length) {
-      for (const h of data.profile.hobby) {
+    if (data.hobby?.length) {
+      for (const h of data.hobby) {
         hobby = await this.hobbyService.getOneHobby(h);
         if (hobby) {
           profile.hobbies.push(hobby);
         }
       }
     }
-    if (data.images.length) {
+    if (file.length) {
       for (const image of images) {
         await this.profilePhotosRepository.save({ image: image, profile });
       }
@@ -64,21 +68,21 @@ export class ProfileService {
     profile.category = { id: dto.categoryId, gender: null, value: null, profiles: [] };
     profile.secondName = dto.secondName;
     profile.description = dto.description;
-    profile.region = dto.region;
+    const region = new Region();
+    region.id = dto.regionId;
+    profile.region = region;
     return await this.profileRepository.save(profile);
   }
 
   async deleteImage(dto: RemoveImageDto) {
     const profile = await this.profileRepository.findOne({ where: { userId: dto.userId }, relations: ['photos'] });
     console.log(dto.imageId);
-    const photo = await this.profilePhotosRepository.findOne({
+   await this.profilePhotosRepository.findOne({
       where: {
         id: dto.imageId,
         profile,
       },
     });
-    console.log(profile);
-    console.log(photo);
     return await this.profilePhotosRepository.delete({ profile, id: dto.imageId });
   }
 
@@ -97,16 +101,17 @@ export class ProfileService {
       .leftJoin('profile.gender', 'gender')
       .leftJoin('profile.category', 'category')
       .leftJoin('profile.religion', 'religion')
+      .leftJoin('profile.region', 'region')
       .leftJoinAndSelect('profile.avatar', 'avatar')
       .andWhere('profile.userId <> :userId', { userId: data.userId })
       .andWhere('profile.block = :block', { block: false })
-      .andWhere('gender.id =:id', { id: 1 });
+      .andWhere('gender.id =:id', { id: profile.gender.id === 1 ? 2 : 1 });
 
     if (data?.hobby && profile.hobbies.length) {
       query.andWhere('profile.hobbies IN (:...hobbies)', { hobbies: profile.hobbies });
     }
-    if (profile.gender.id === 1) {
-      query.andWhere('gender.id = :id', { id: 2 });
+    if (data?.regionId) {
+      query.andWhere('region.id = :id', { id: data.religion });
     }
     if (data?.religion && profile.religion) {
       query.andWhere('religion.id = :id', { id: profile.religion.id });
