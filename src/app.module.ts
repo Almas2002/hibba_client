@@ -17,9 +17,22 @@ import { RoleModule } from './role/role.module';
 import { ReligionModule } from './religion/religion.module';
 import { GenderModule } from './gender/gender.module';
 import { config } from './ormconfig';
+require('dotenv').config()
+
 @Module({
   imports: [
-    TypeOrmModule.forRoot(config)
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.POSTGRES_HOST,
+      port: 5432,
+      username: process.env.POSTGRES_USER,
+      database: process.env.POSTGRES_DB,
+      password: process.env.POSTGRES_PASSWORD,
+      ssl:false,
+      // url: process.env.DATABASE_URL,
+      entities: [__dirname + "/**/*.entity{.ts,.js}"],
+      synchronize: true,
+    })
     ,
     ConfigModule.forRoot({
       isGlobal: true,
