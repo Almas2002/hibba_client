@@ -12,3 +12,5 @@ RUN npm install
 COPY . .
 
 COPY ./dist ./dist
+
+CMD ["npm","run","start:dev"]
