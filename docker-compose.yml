@@ -3,7 +3,8 @@ version: "3.1"
 services:
   api:
     container_name: api
-    build: ./
+    build:
+      context: .
     command: npm run start
     restart: always
     volumes:
