@@ -1,8 +1,10 @@
 server {
      listen 80;
      server_name 164.92.164.203;
+     autoindex on;
      location / {
-        proxy_pass http://api:3000;
+        proxy_pass http://api:3000/;
+proxy_max_temp_file_size 0;
         proxy_set_header        X-Real-IP       $remote_addr;
         proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
      }
