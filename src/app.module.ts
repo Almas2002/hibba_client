@@ -16,7 +16,6 @@ import { ProfileModule } from './profile/profile.module';
 import { RoleModule } from './role/role.module';
 import { ReligionModule } from './religion/religion.module';
 import { GenderModule } from './gender/gender.module';
-import { config } from './ormconfig';
 require('dotenv').config()
 
 @Module({
