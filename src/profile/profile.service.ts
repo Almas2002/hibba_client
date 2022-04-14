@@ -56,7 +56,7 @@ export class ProfileService {
   async getUserProfile(userId: number) {
     return await this.profileRepository.findOne({
       where: { userId },
-      relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers', 'myLikes.likedProfile', 'likedUsers.profile', 'religion', 'photos', 'avatar'],
+      relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers', 'myLikes.likedProfile', 'likedUsers.profile', 'religion', 'photos', 'avatar', 'region'],
     });
   }
 
@@ -77,7 +77,7 @@ export class ProfileService {
   async deleteImage(dto: RemoveImageDto) {
     const profile = await this.profileRepository.findOne({ where: { userId: dto.userId }, relations: ['photos'] });
     console.log(dto.imageId);
-   await this.profilePhotosRepository.findOne({
+    await this.profilePhotosRepository.findOne({
       where: {
         id: dto.imageId,
         profile,
@@ -110,8 +110,8 @@ export class ProfileService {
     if (data?.hobby && profile.hobbies.length) {
       query.andWhere('profile.hobbies IN (:...hobbies)', { hobbies: profile.hobbies });
     }
-    if (data?.regionId) {
-      query.andWhere('region.id = :id', { id: data.religion });
+    if (data?.region) {
+      query.andWhere('region.id = :id', { id: profile.region.id });
     }
     if (data?.religion && profile.religion) {
       query.andWhere('religion.id = :id', { id: profile.religion.id });

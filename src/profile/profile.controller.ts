@@ -20,9 +20,9 @@ import { LikeProfileDto } from './dto/like-profile.dto';
 import { UpdateAvatarDto } from './dto/update-avatar.dto';
 import { RemoveImageDto } from './dto/remove-image.dto';
 import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 
-@ApiTags()
+@ApiTags("profile")
 @Controller('profile')
 export class ProfileController {
   constructor(private profileService:ProfileService,private fileService:FileService) {}
@@ -48,6 +48,15 @@ export class ProfileController {
     return this.profileService.getUserProfile(id);
   }
   @ApiOperation({description:"получить профили"})
+  @ApiQuery({name:"limit",type:"int",required:false})
+  @ApiQuery({name:"page",type:"int",required:false})
+  @ApiQuery({name:"ageTo",type:"int",required:false,example:"18"})
+  @ApiQuery({name:"ageFrom",type:"int",required:false})
+  @ApiQuery({name:"category",type:"boolean",required:false,example:"true || false"})
+  @ApiQuery({name:"hobby",type:"boolean",required:false,example:"true || false"})
+  @ApiQuery({name:"religion",type:"boolean",required:false,example:"true || false"})
+  @ApiQuery({name:"region",type:"boolean",required:false,example:"true || false"})
+  @ApiQuery({name:"search",type:"string",required:false})
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('get-profiles')
