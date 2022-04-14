@@ -4,6 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import * as requestIp from 'request-ip';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MyValidationPipe } from './pipes/MyValidatorPipe';
+import bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,8 +17,11 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addTag('Hibba')
     .build();
+  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
   const documentation = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/docs', app, documentation);
+
   await app.listen(3000);
 }
 bootstrap();
