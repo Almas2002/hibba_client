@@ -7,3 +7,5 @@ RUN npm i npm
 RUN npm install
 
 COPY . .
+
+COPY ./dist ./dist
