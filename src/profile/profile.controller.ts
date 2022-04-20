@@ -27,6 +27,7 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 export class ProfileController {
   constructor(private profileService:ProfileService,private fileService:FileService) {}
   @UseGuards(AuthGuard)
+  @ApiImplicitFile({ name: 'file', description: 'аватар можно добавить 7 фотографий' })
   @UseInterceptors(FileInterceptor('file'))
   @Post('add-image')
   async addImage(@UserDecorator('id')userId: number, @UploadedFile('file')file: any) {
