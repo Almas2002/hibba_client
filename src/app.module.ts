@@ -16,6 +16,7 @@ import { ProfileModule } from './profile/profile.module';
 import { RoleModule } from './role/role.module';
 import { ReligionModule } from './religion/religion.module';
 import { GenderModule } from './gender/gender.module';
+import { ComplaintModule } from './complaint/complaint.module';
 require('dotenv').config()
 
 @Module({
@@ -39,7 +40,7 @@ require('dotenv').config()
     }),
   ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),
-    }),AuthModule,UserModule,FileModule,HobbyModule,CategoryModule,ProfileModule,RoleModule,ReligionModule,GenderModule
+    }),AuthModule,UserModule,FileModule,HobbyModule,CategoryModule,ProfileModule,RoleModule,ReligionModule,GenderModule,ComplaintModule
   ],
   controllers: [],
   providers: [],
