@@ -32,6 +32,6 @@ export class RoomService {
   }
 
   async getRoom(id: number): Promise<Room> {
-    return await this.roomRepository.findOne({ id },{relations:["joinedUsers"]});
+    return await this.roomRepository.findOne({ id },{relations:["joinedUsers","joinedUsers.user"]});
   }
 }

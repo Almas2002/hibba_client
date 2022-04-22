@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JoinedRoom } from './model/joined-room.entity';
 import { Message } from './model/message.entity';
 import { Room } from './model/room.entity';
+import { ProfileModule } from '../profile/profile.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JoinedRoom, Message, Room])],
+  imports: [TypeOrmModule.forFeature([JoinedRoom, Message, Room]),ProfileModule],
   providers: [JoinedRoomService, MessageService, RoomService],
   exports:[JoinedRoomService,MessageService,RoomService]
 })
