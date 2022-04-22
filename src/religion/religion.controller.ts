@@ -1,12 +1,12 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ReligionService } from './religion.service';
 
-@Controller()
+@Controller('religion')
 export class ReligionController {
   constructor(private religionService: ReligionService) {
   }
   @Post('create-religion')
-  createReligion(value: string) {
+  createReligion(@Body('value')value: string) {
     return this.religionService.createReligion(value);
   }
 

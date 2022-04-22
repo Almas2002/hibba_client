@@ -13,23 +13,42 @@ import { AddImagesDto } from './dto/add-images.dto';
 import { RemoveImageDto } from './dto/remove-image.dto';
 import { FileService } from '../file/file.service';
 import { Region } from '../region/region.entity';
+import { CategoryService } from '../category/category.service';
+import { RegionService } from '../region/region.service';
+import { ReligionService } from '../religion/religion.service';
+import { GenderService } from '../gender/gender.service';
 
 @Injectable()
 export class ProfileService {
   constructor(@InjectRepository(Profile) private profileRepository: Repository<Profile>,
               @InjectRepository(Like) private likeRepository: Repository<Like>
-    , private hobbyService: HobbyService, @InjectRepository(ProfilePhotos) private profilePhotosRepository: Repository<ProfilePhotos>, private fileService: FileService) {
+    , private hobbyService: HobbyService, @InjectRepository(ProfilePhotos) private profilePhotosRepository: Repository<ProfilePhotos>,
+              private fileService: FileService, private categoryService: CategoryService, private regionService: RegionService,
+              private religionService: ReligionService, private genderService: GenderService) {
   }
 
   async createProfile(data: CreateProfileDto, file: any[]) {
     const images: string[] = [];
+    const candidate = await this.profileRepository.findOne({ id: data.userId });
+    if (candidate) {
+      throw new HttpException('у вас уже есть профиль', 400);
+    }
+    const candidateCategory = await this.categoryService.findOne(data.categoryId);
+    const candidateRegion = await this.regionService.findOne(data.regionId);
+    const candidateReligion = await this.religionService.findOne(data.religionId);
+    const candidateGender = await this.genderService.findOne(data.genderId);
+    if (!candidateCategory || !candidateGender || candidateRegion || candidateReligion) {
+      throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
+    }
     const profile = await this.profileRepository.save({
       ...data,
+      user: { id: data.userId },
       region: { id: data.regionId },
       gender: { id: data.genderId },
       category: { id: data.categoryId },
       religion: { id: data.religionId },
     });
+
     if (file.length) {
       for (const f of file) {
         images.push(await this.fileService.createFile(f));

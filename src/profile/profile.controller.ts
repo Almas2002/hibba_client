@@ -21,66 +21,77 @@ import { UpdateAvatarDto } from './dto/update-avatar.dto';
 import { RemoveImageDto } from './dto/remove-image.dto';
 import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Auth } from '../auth/auth.entity';
 
-@ApiTags("profile")
+@ApiTags('profile')
 @Controller('profile')
 export class ProfileController {
-  constructor(private profileService:ProfileService,private fileService:FileService) {}
+  constructor(private profileService: ProfileService, private fileService: FileService) {
+  }
+
   @UseGuards(AuthGuard)
   @ApiImplicitFile({ name: 'file', description: 'аватар можно добавить 7 фотографий' })
   @UseInterceptors(FileInterceptor('file'))
   @Post('add-image')
   async addImage(@UserDecorator('id')userId: number, @UploadedFile('file')file: any) {
-    const image = await this.fileService.createFile(file)
-    return await this.profileService.addImagesToProfile({userId,image});
+    const image = await this.fileService.createFile(file);
+    return await this.profileService.addImagesToProfile({ userId, image });
   }
+
   @ApiImplicitFile({ name: 'file', description: 'аватар можно добавить 7 фотографий' })
   @UseInterceptors(FileFieldsInterceptor(([{ name: 'file', maxCount: 7 }])))
+  @UseGuards(AuthGuard)
   @Post('create-profile')
   async createProfile(@Body()profile: CreateProfileDto, @UserDecorator('id')id: number, @UploadedFiles()files: { file: any[] }) {
-    profile = { ...profile,userId:id};
+    console.log(id);
+    profile = { ...profile, userId: id };
     return this.profileService.createProfile(profile, files.file);
   }
-  @ApiOperation({description:"получить профиль по токену"})
+
+  @ApiOperation({ description: 'получить профиль по токену' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('me')
-  getUserProfile(@UserDecorator('id')id:number) {
+  getUserProfile(@UserDecorator('id')id: number) {
     return this.profileService.getUserProfile(id);
   }
-  @ApiOperation({description:"получить профили"})
-  @ApiQuery({name:"limit",type:"int",required:false})
-  @ApiQuery({name:"page",type:"int",required:false})
-  @ApiQuery({name:"ageTo",type:"int",required:false,example:"18"})
-  @ApiQuery({name:"ageFrom",type:"int",required:false})
-  @ApiQuery({name:"category",type:"boolean",required:false,example:"true || false"})
-  @ApiQuery({name:"hobby",type:"boolean",required:false,example:"true || false"})
-  @ApiQuery({name:"religion",type:"boolean",required:false,example:"true || false"})
-  @ApiQuery({name:"region",type:"boolean",required:false,example:"true || false"})
-  @ApiQuery({name:"search",type:"string",required:false})
+
+  @ApiOperation({ description: 'получить профили' })
+  @ApiQuery({ name: 'limit', type: 'int', required: false })
+  @ApiQuery({ name: 'page', type: 'int', required: false })
+  @ApiQuery({ name: 'ageTo', type: 'int', required: false, example: '18' })
+  @ApiQuery({ name: 'ageFrom', type: 'int', required: false })
+  @ApiQuery({ name: 'category', type: 'boolean', required: false, example: 'true || false' })
+  @ApiQuery({ name: 'hobby', type: 'boolean', required: false, example: 'true || false' })
+  @ApiQuery({ name: 'religion', type: 'boolean', required: false, example: 'true || false' })
+  @ApiQuery({ name: 'region', type: 'boolean', required: false, example: 'true || false' })
+  @ApiQuery({ name: 'search', type: 'string', required: false })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('get-profiles')
-  getProfiles(@Query()data: GetProfileQueryInterface,@UserDecorator('id')userId:number) {
-    data = {...data,userId}
+  getProfiles(@Query()data: GetProfileQueryInterface, @UserDecorator('id')userId: number) {
+    data = { ...data, userId };
     return this.profileService.getProFiles(data);
   }
-  @ApiOperation({description:"получить профилей"})
+
+  @ApiOperation({ description: 'получить профилей' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post('like-profile')
-  likeProfile(@Body()data: LikeProfileDto,@UserDecorator('id')userId:number) {
-    data = {...data ,userId}
+  likeProfile(@Body()data: LikeProfileDto, @UserDecorator('id')userId: number) {
+    data = { ...data, userId };
     return this.profileService.likeProfile(data);
   }
-  @ApiOperation({description:"блокировать профиль"})
+
+  @ApiOperation({ description: 'блокировать профиль' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Put('block-profile/:id')
   blockProfile(@Param('id')profileId: number) {
     return this.profileService.blockUser(profileId);
   }
-  @ApiOperation({description:"получить блокированных пользователей"})
+
+  @ApiOperation({ description: 'получить блокированных пользователей' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('get-blocked-profiles')
@@ -88,19 +99,20 @@ export class ProfileController {
     return this.profileService.getBlockedUsers(pagination);
   }
 
-  @ApiOperation({description:"изменить аватар"})
+  @ApiOperation({ description: 'изменить аватар' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Put('update-avatar')
-  updateAvatar(@Body()dto: UpdateAvatarDto,@UserDecorator('id')id:number) {
+  updateAvatar(@Body()dto: UpdateAvatarDto, @UserDecorator('id')id: number) {
     return this.profileService.updateAvatar(id, dto.photoId);
   }
-  @ApiOperation({description:"удалить фотку"})
+
+  @ApiOperation({ description: 'удалить фотку' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete('remove-image')
-  removeImage(@Body()dto:RemoveImageDto,@UserDecorator('id')id:number) {
-    dto = {...dto,userId:id}
+  removeImage(@Body()dto: RemoveImageDto, @UserDecorator('id')id: number) {
+    dto = { ...dto, userId: id };
     return this.profileService.deleteImage(dto);
   }
 }

@@ -13,4 +13,7 @@ export class ReligionService {
   async getReligions(){
     return await this.religionRepository.find()
   }
+  async findOne(id:number){
+    return await this.religionRepository.findOne(id)
+  }
 }

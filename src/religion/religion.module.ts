@@ -7,6 +7,7 @@ import { Religion } from './religion.entity';
 @Module({
   controllers:[ReligionController],
   providers:[ReligionService],
-  imports:[TypeOrmModule.forFeature([Religion])]
+  imports:[TypeOrmModule.forFeature([Religion])],
+  exports:[ReligionService]
 })
 export class ReligionModule {}

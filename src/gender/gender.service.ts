@@ -20,5 +20,8 @@ export class GenderService {
     gender.value = newValue
     return await this.genderRepository.save(gender)
   }
+  async findOne(id:number){
+    return  await this.genderRepository.findOne(id)
+  }
 
 }

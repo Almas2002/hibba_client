@@ -11,7 +11,6 @@ export class CategoryService {
   }
 
   async createCategory(data: CreateCategoryDto) {
-    console.log(data);
     return await this.categoryRepository.save({ ...data, gender: { id: data.genderId } });
   }
 
@@ -34,5 +33,8 @@ export class CategoryService {
   }
   async getOneCategory(id:number){
     return await this.categoryRepository.findOne({id})
+  }
+  async findOne(id:number){
+    return  await this.categoryRepository.findOne({where:{id}})
   }
 }

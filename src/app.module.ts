@@ -17,7 +17,9 @@ import { RoleModule } from './role/role.module';
 import { ReligionModule } from './religion/religion.module';
 import { GenderModule } from './gender/gender.module';
 import { ComplaintModule } from './complaint/complaint.module';
-require('dotenv').config()
+import { RegionModule } from './region/region.module';
+
+require('dotenv').config();
 
 @Module({
   imports: [
@@ -28,19 +30,20 @@ require('dotenv').config()
       username: process.env.POSTGRES_USER,
       database: process.env.POSTGRES_DB,
       password: process.env.POSTGRES_PASSWORD,
-      ssl:false,
+      ssl: false,
       // url: process.env.DATABASE_URL,
-      entities: [__dirname + "/**/*.entity{.ts,.js}"],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     })
     ,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath:".env"
+      envFilePath: '.env',
     }),
-  ServeStaticModule.forRoot({
+    ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),
-    }),AuthModule,UserModule,FileModule,HobbyModule,CategoryModule,ProfileModule,RoleModule,ReligionModule,GenderModule,ComplaintModule
+    }), AuthModule, UserModule, FileModule, HobbyModule, CategoryModule,
+    ProfileModule, RoleModule, ReligionModule, GenderModule, ComplaintModule, RegionModule,
   ],
   controllers: [],
   providers: [],
@@ -49,7 +52,7 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes({
       path: '*',
-      method: RequestMethod.ALL
-    })
+      method: RequestMethod.ALL,
+    });
   }
 }

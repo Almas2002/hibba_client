@@ -13,7 +13,10 @@ export class RegionService {
   }
 
   async getRegions(){
-    return await this.regionRepository.find({})
+    return await this.regionRepository.find()
+  }
+  async findOne(id:number){
+    return await this.regionRepository.findOne(id)
   }
 
 }
