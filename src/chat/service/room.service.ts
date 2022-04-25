@@ -10,7 +10,7 @@ export class RoomService {
   constructor(@InjectRepository(Room) private roomRepository: Repository<Room>) {
   }
 
-  async getRoomsForUser(userId: number, option: IPagination) {
+  async getRoomsForUser(userId: number, option?: IPagination) {
     const limit = option?.limit || 10;
     const page = option?.page || 1;
     const offset = page * limit - limit;
@@ -28,7 +28,8 @@ export class RoomService {
   async createRoom(creator: User, user: User) {
     const room = await this.roomRepository.save({});
     room.users = [creator, user];
-    return await this.roomRepository.save(room);
+    await this.roomRepository.save(room);
+    return this.getRoomsForUser(creator.id)
   }
 
   async getRoom(id: number): Promise<Room> {

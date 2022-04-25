@@ -9,8 +9,6 @@ import { ProfileService } from '../profile/profile.service';
 export class ComplaintService {
   constructor(@InjectRepository(Complaint) private complaintRepository: Repository<Complaint>, private profileService: ProfileService) {
   }
-
-
   async createComplaint(dto: CreateComplaintDto) {
     const profile = await this.profileService.getUserProfile(dto.userId);
     const complaints = await this.complaintRepository.find({ where: { reporter: profile, createdAt: new Date() } });
