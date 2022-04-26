@@ -8,8 +8,8 @@ export class JoinedRoomService {
   constructor(@InjectRepository(JoinedRoom) private joinedRoomRepository: Repository<JoinedRoom>) {
   }
 
-  async createJoinedRoom() {
-
+  async create(socketId:string,userId:number,roomId:number){
+    return await this.joinedRoomRepository.save({socketId,user:{id:userId},room:{id:roomId}})
   }
 
   async findByUserId(userId: number) {
@@ -17,7 +17,7 @@ export class JoinedRoomService {
   }
 
   async findByRoomId(roomId: number) {
-    return this.joinedRoomRepository.find({ where: { room: { id: roomId } } });
+    return this.joinedRoomRepository.find({ where: { room: { id: roomId } },relations:["user"] });
   }
 
   async deleteBySocketId(socketId: string) {
