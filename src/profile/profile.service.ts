@@ -37,7 +37,13 @@ export class ProfileService {
     const candidateRegion = await this.regionService.findOne(data.regionId);
     const candidateReligion = await this.religionService.findOne(data.religionId);
     const candidateGender = await this.genderService.findOne(data.genderId);
-    if (!candidateCategory || !candidateGender || candidateRegion || candidateReligion) {
+    console.log(data);
+    console.log(candidateCategory);
+    console.log(candidateRegion);
+    console.log(candidateReligion);
+    console.log(candidateGender);
+
+    if (!candidateCategory || !candidateGender || !candidateRegion || !candidateReligion) {
       throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
     }
     const profile = await this.profileRepository.save({
@@ -74,7 +80,7 @@ export class ProfileService {
 
   async getUserProfile(userId: number) {
     return await this.profileRepository.findOne({
-      where: { userId },
+      where: { user:{id:userId} },
       relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers', 'myLikes.likedProfile', 'likedUsers.profile', 'religion', 'photos', 'avatar', 'region'],
     });
   }
@@ -122,7 +128,7 @@ export class ProfileService {
       .leftJoin('profile.religion', 'religion')
       .leftJoin('profile.region', 'region')
       .leftJoinAndSelect('profile.avatar', 'avatar')
-      .andWhere('profile.userId <> :userId', { userId: data.userId })
+      .andWhere('profile.user_id <> :userId', { userId: data.userId })
       .andWhere('profile.block = :block', { block: false })
       .andWhere('gender.id =:id', { id: profile.gender.id === 1 ? 2 : 1 });
 
@@ -176,20 +182,29 @@ export class ProfileService {
     if (!candidateProfile) {
       throw new HttpException({ message: 'такого профиля нету' }, HttpStatus.BAD_REQUEST);
     }
-    let userProfile = await this.profileRepository.findOne({ where: { userId: dto.userId } });
+    let userProfile = await this.profileRepository.findOne({ where: { user: {id:dto.userId} } });
     let profile = await this.likeRepository.findOne({
       where: {
         profile: { id: dto.profileId },
         likedProfile: userProfile,
-      },
+      }
     });
+    if (userProfile.id ==candidateProfile.id){
+      throw new HttpException({ message: 'вы не можете лайкнуть себя' }, HttpStatus.BAD_REQUEST);
+    }
+
     let candidate = await this.likeRepository.findOne({
       where: {
         profile: userProfile,
         likedProfile: { id: dto.profileId },
       },
     });
+
     if (candidate) {
+      console.log(profile);
+      await this.likeRepository.delete({id:candidate.id})
+      profile.mutually = !profile.mutually;
+      await this.likeRepository.save(profile);
       return;
     }
     if (profile) {

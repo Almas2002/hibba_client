@@ -23,19 +23,13 @@ export class AuthService {
   }
 
   async login(data: UserLoginDto) {
-    try {
       const user = await this.validation(data);
       const tokens = await this.generationToken(user);
       await this.saveToken(user, tokens.refresh_token);
-      return { ...tokens };
-
-    } catch (e) {
-      throw new HttpException('что то пошло не так', 400);
-    }
+      return { ...tokens};
   }
 
   async registration(data: UserLoginDto, admin: boolean = false) {
-    try {
       const hashPassword = await bcrypt.hash(data.password, 5);
       const candidate = await this.userService.getUserByPhoneNumber(data.phone);
       if (candidate) {
@@ -47,9 +41,7 @@ export class AuthService {
       const tokens = await this.generationToken(user);
       await this.authRepository.save({ user, refresh_token: tokens.refresh_token });
       return { ...tokens };
-    } catch (e) {
-      throw new HttpException('что то пошло не так', 400);
-    }
+
 
   }
 
