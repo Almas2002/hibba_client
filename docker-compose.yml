@@ -20,21 +20,17 @@ services:
     volumes:
       - ./nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
     depends_on:
-      - api
-  postgres:
-    container_name: postgres
-    image: postgres:13.3
+      - apig
+  db:
+    image: postgres
     environment:
-      - POSTGRES_DB=hibba
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=hibba
     ports:
-       - "5432:5432"
+      - "5433:5432"
     volumes:
-    - pgdata:/var/lib/postgresql/data
-    restart: always
-    depends_on:
-      - api
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
   pgdata:
