@@ -14,7 +14,7 @@ export class NotificationGatewayService {
     const notification = await this.notificationService.createNotificationForEverybody(message);
     const users = await this.connectedUserService.findAllUser();
     for (const user of users) {
-      this.notificationGateway.sendToUser(user.socketId, notification);
+      this.notificationGateway.sendToUser(user.socketId, notification)
     }
   }
 
