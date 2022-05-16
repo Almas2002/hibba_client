@@ -7,6 +7,7 @@ import * as fs from 'fs';
 export class FileService {
   async createFile(file: any): Promise<string> {
     try {
+      console.log("CI?CD")
       const filename: string = uuid.v4() + '.jpg';
       const filePath = path.resolve(__dirname, '..', 'static');
       if (!fs.existsSync(filePath)) {
