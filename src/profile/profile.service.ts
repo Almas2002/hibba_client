@@ -131,10 +131,10 @@ export class ProfileService {
       query.andWhere('profile.hobbies IN (:...hobbies)', { hobbies: profile.hobbies });
     }
     if (data?.region) {
-      query.andWhere('region.id = :id', { id: profile.region.id });
+      query.andWhere('region.id = :id', { id: data.region });
     }
-    if (data?.religion && profile.religion) {
-      query.andWhere('religion.id = :id', { id: profile.religion.id });
+    if (data?.religion) {
+      query.andWhere('religion.id = :id', { id: data.religion });
     }
     if (!data?.ageFrom && data.ageTo) {
       query.andWhere('profile.age <= :age ', { age: data.ageTo });

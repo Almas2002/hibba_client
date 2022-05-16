@@ -5,7 +5,7 @@ export interface GetProfileQueryInterface extends IPagination{
   block?:boolean;
   category?:boolean;
   hobby?:boolean
-  religion?:boolean
+  religion?:number
   search?:string
   region?:number
 }
