@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto, updateCategory } from './dto/create-category.dto';
-import { ExceptionHandler } from '@nestjs/core/errors/exception-handler';
 
 @Injectable()
 export class CategoryService {

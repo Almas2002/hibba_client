@@ -196,7 +196,6 @@ export class ProfileService {
     });
 
     if (candidate) {
-      console.log(profile);
       await this.likeRepository.delete({id:candidate.id})
       profile.mutually = !profile.mutually;
       await this.likeRepository.save(profile);
