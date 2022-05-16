@@ -117,12 +117,13 @@ export class ProfileService {
     const offset = page * limit - limit;
     const profile = await this.getUserProfile(data.userId);
     const query = await this.profileRepository.createQueryBuilder('profile')
-      .leftJoin('profile.hobbies', 'hobbies')
-      .leftJoin('profile.gender', 'gender')
-      .leftJoin('profile.category', 'category')
-      .leftJoin('profile.religion', 'religion')
-      .leftJoin('profile.region', 'region')
+      .leftJoinAndSelect('profile.hobbies', 'hobbies')
+      .leftJoinAndSelect('profile.gender', 'gender')
+      .leftJoinAndSelect('profile.category', 'category')
+      .leftJoinAndSelect('profile.religion', 'religion')
+      .leftJoinAndSelect('profile.region', 'region')
       .leftJoinAndSelect('profile.avatar', 'avatar')
+      .leftJoinAndSelect('profile.photos', 'photos')
       .andWhere('profile.user_id <> :userId', { userId: data.userId })
       .andWhere('profile.block = :block', { block: false })
       .andWhere('gender.id =:id', { id: profile.gender.id === 1 ? 2 : 1 });
@@ -161,8 +162,8 @@ export class ProfileService {
       //.andWhere('gender.id = any', { ids: ['1', '2'] });
 
     }
-    if (data?.hobby && profile.category) {
-      query.andWhere('category.id = :id', { id: profile.category.id });
+    if (data?.category) {
+      query.andWhere('category.id = :id', { id: data.category });
     }
     query.limit(limit);
     query.offset(offset);
