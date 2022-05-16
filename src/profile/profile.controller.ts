@@ -61,7 +61,7 @@ export class ProfileController {
   @ApiQuery({ name: 'page', type: 'int', required: false })
   @ApiQuery({ name: 'ageTo', type: 'int', required: false, example: '18' })
   @ApiQuery({ name: 'ageFrom', type: 'int', required: false })
-  @ApiQuery({ name: 'category', type: 'boolean', required: false, example: 'true || false' })
+  @ApiQuery({ name: 'category', type: 'number', required: false, example:1 })
   @ApiQuery({ name: 'hobby', type: 'boolean', required: false, example: 'true || false' })
   @ApiQuery({ name: 'religion', type: 'number', required: false, example: 1 })
   @ApiQuery({ name: 'region', type: 'number', required: false, example: 1})
