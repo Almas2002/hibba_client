@@ -37,11 +37,6 @@ export class ProfileService {
     const candidateRegion = await this.regionService.findOne(data.regionId);
     const candidateReligion = await this.religionService.findOne(data.religionId);
     const candidateGender = await this.genderService.findOne(data.genderId);
-    console.log(data);
-    console.log(candidateCategory);
-    console.log(candidateRegion);
-    console.log(candidateReligion);
-    console.log(candidateGender);
 
     if (!candidateCategory || !candidateGender || !candidateRegion || !candidateReligion) {
       throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
@@ -55,7 +50,7 @@ export class ProfileService {
       religion: { id: data.religionId },
     });
 
-    if (file.length) {
+    if (file?.length) {
       for (const f of file) {
         images.push(await this.fileService.createFile(f));
       }
