@@ -19,7 +19,7 @@ export class ComplaintService {
   }
 
   async getComplaint(profileId: number) {
-    console.log("CI/CD")
+    console.log("CI/CD/AND")
     return await this.complaintRepository.find({ where: { culprit: { id: profileId } }, relations: ['reporter'] });
   }
 }
