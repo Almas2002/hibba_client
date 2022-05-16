@@ -233,7 +233,7 @@ export class ProfileService {
   }
 
   async updateAvatar(userId: number, photoId: number) {
-    const profile = await this.profileRepository.findOne({ where: { userId } });
+    const profile = await this.profileRepository.findOne({ where: { user:{id:userId} } });
     profile.avatar = await this.profilePhotosRepository.findOne({ where: { id: photoId } });
     await this.profileRepository.save(profile);
   }
