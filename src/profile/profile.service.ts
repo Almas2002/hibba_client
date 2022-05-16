@@ -234,9 +234,13 @@ export class ProfileService {
 
   async updateAvatar(userId: number, photoId: number) {
     const profile = await this.profileRepository.findOne({ where: { user:{id:userId} } });
-    const photo =await this.profilePhotosRepository.findOne({ where: { id: photoId } });
+    const photo =await this.profilePhotosRepository.findOne({ where: { id: photoId } ,relations:["profile"]});
+
     if (!photo){
       throw new HttpException("Не найден фото",404)
+    }
+    if (profile.id != photo.profile.id){
+      throw new HttpException("это не ваше фото",400)
     }
     profile.avatar = photo
     await this.profileRepository.save(profile);
