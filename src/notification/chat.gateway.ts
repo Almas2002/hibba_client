@@ -15,6 +15,7 @@ import {IMessage} from './interface/interface';
 import {MessageService} from '../chat/service/message.service';
 import {RoomService} from '../chat/service/room.service';
 import {JoinedRoomService} from '../chat/service/joined-room.service';
+import {TypingDto} from "./dto/typing.dto";
 
 @WebSocketGateway({namespace: '/', cors: true})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
@@ -66,6 +67,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @SubscribeMessage('leave-room')
     async leaveRoom(socket: Socket) {
         await this.joinedRoomService.deleteBySocketId(socket.id)
+    }
+
+    @SubscribeMessage('typing')
+    async typing(socket: Socket, data: TypingDto) {
+        const room = await this.roomService.getRoom(data.chatId);
+        if (!room) {
+            await this.wss.emit('Error', 'такого канала нету');
+        }
+        const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
+
+        for (const user of joinedUsers) {
+            if (user.id !=socket.data.user){
+                await this.wss.to(user.socketId).emit('typing', data);
+            }
+        }
+
     }
 
     private static disconnect(socket: Socket) {

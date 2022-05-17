@@ -60,6 +60,9 @@ export class Profile extends BaseEntity {
   @Column({ default: false })
   block: boolean;
 
+  @Column({default:0})
+  kids:number
+
   @ManyToOne(() => Religion, religion => religion)
   religion: Religion;
 

@@ -10,7 +10,6 @@ import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HobbyModule } from './hobby/hobby.module';
-import { Category } from './category/category.entity';
 import { CategoryModule } from './category/category.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoleModule } from './role/role.module';
