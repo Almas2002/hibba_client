@@ -20,7 +20,7 @@ export class HobbyService {
 
   async getHobbies(genderId: number) {
     if (genderId !== 0) {
-      return await this.hobbyRepository.find({ where: { genderId } });
+      return await this.hobbyRepository.find({ where: { gender:{id:genderId}} });
     }
     return await this.hobbyRepository.find();
   }

@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Query, UseGuards} from '@nestjs/common';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { ComplaintService } from './complaint.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { UserDecorator } from '../user/decorators/user.decorator';
+import {IPagination} from "../profile/interfaces/get-profile-query.interface";
 @ApiTags('complaint')
 @Controller('complaint')
 export class ComplaintController {
@@ -17,8 +18,17 @@ export class ComplaintController {
     return this.complaintService.createComplaint(dto)
   }
 
-  @Get("get-user-of-reports/:id")
+  @Get("get-profile-of-reports/:id")
   getUserOfReports(@Param('id')profileId:number){
     return this.complaintService.getComplaint(profileId)
   }
+  @ApiOperation({summary:"взять жалобы"})
+  @ApiQuery({example:10,name:"limit",type:"number"})
+  @ApiQuery({example:1,name:"offset",type:"number"})
+  @Get("/")
+  getComplaints(@Query()pagination:IPagination){
+      return this.complaintService.getComplaints(pagination)
+  }
+
+
 }

@@ -21,7 +21,6 @@ import { UpdateAvatarDto } from './dto/update-avatar.dto';
 import { RemoveImageDto } from './dto/remove-image.dto';
 import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Auth } from '../auth/auth.entity';
 
 @ApiTags('profile')
 @Controller('profile')
