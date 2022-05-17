@@ -13,8 +13,8 @@ export class CreateProfileDto {
   secondName: string;
   @ApiProperty({example:"1",description:"айди"})
   genderId: number;
-  @ApiProperty({example:"[1,2,3]",description:""})
-  hobby?: number[];
+  @ApiProperty({example:"1,2,3",description:""})
+  hobby?: string;
   @ApiProperty({example:"1",description:"категория"})
   categoryId: number;
   @ApiProperty({example:"1",description:"религия"})

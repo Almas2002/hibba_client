@@ -58,14 +58,15 @@ export class ProfileService {
     let hobby;
     profile.hobbies = [];
     if (data.hobby?.length) {
-      for (const h of data.hobby) {
-        hobby = await this.hobbyService.getOneHobby(h);
+      const len = data.hobby.split(',')
+      for (const h of len) {
+        hobby = await this.hobbyService.getOneHobby(+h);
         if (hobby) {
           profile.hobbies.push(hobby);
         }
       }
     }
-    if (file.length) {
+    if (file?.length) {
       for (const image of images) {
         await this.profilePhotosRepository.save({ image: image, profile });
       }
