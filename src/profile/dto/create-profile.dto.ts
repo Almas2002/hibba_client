@@ -19,6 +19,8 @@ export class CreateProfileDto {
   categoryId: number;
   @ApiProperty({example:"1",description:"религия"})
   religionId: number;
+  @ApiProperty({example:"1",description:"малыши"})
+  kids: number;
   userId:number
 }
 
