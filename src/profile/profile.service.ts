@@ -66,11 +66,18 @@ export class ProfileService {
         }
       }
     }
+    let photo;
     if (file?.length) {
-      for (const image of images) {
-        await this.profilePhotosRepository.save({ image: image, profile });
+      for (let  i= 0; i < images.length;i++ ) {
+        if (i == 0){
+          photo =await this.profilePhotosRepository.save({ image: images[i], profile });
+        }else {
+          await this.profilePhotosRepository.save({ image: images[i], profile });
+        }
+
       }
     }
+    await this.updateAvatar(data.userId,photo.id)
     await this.profileRepository.save(profile);
   }
 
