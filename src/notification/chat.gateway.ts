@@ -33,7 +33,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         let token;
         console.log("hello")
         if (!socket.handshake.query.token) {
-            throw new UnauthorizedException("вы не авторизованы!");
+            return null;
         }
         console.log("hello")
         try {
