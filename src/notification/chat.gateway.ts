@@ -17,7 +17,7 @@ import {RoomService} from '../chat/service/room.service';
 import {JoinedRoomService} from '../chat/service/joined-room.service';
 import {TypingDto} from "./dto/typing.dto";
 
-@WebSocketGateway({namespace: '/', cors: true,})
+@WebSocketGateway({namespace: '/', cors: {origin:"*",credentials: true,methods: ["GET", "POST"],}})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
     constructor(private connectedUserService: ConnectedUserService,
                 private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService) {
