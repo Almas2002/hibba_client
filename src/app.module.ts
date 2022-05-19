@@ -18,6 +18,7 @@ import { GenderModule } from './gender/gender.module';
 import { ComplaintModule } from './complaint/complaint.module';
 import { RegionModule } from './region/region.module';
 import {NotificationModule} from "./notification/notification.module";
+import {ChatModule} from "./chat/chat.module";
 
 require('dotenv').config();
 
@@ -43,7 +44,7 @@ require('dotenv').config();
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),
     }), AuthModule, UserModule, FileModule, HobbyModule, CategoryModule,
-    ProfileModule, RoleModule, ReligionModule, GenderModule, ComplaintModule, RegionModule,NotificationModule
+    ProfileModule, RoleModule, ReligionModule, GenderModule, ComplaintModule, RegionModule,NotificationModule,ChatModule
   ],
   controllers: [],
   providers: [],
