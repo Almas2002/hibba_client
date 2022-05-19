@@ -87,7 +87,10 @@ export class ProfileService {
       relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers', 'myLikes.likedProfile', 'likedUsers.profile', 'religion', 'photos', 'avatar', 'region'],
     });
   }
+  async getUserByProfileId(id:number) {
+    return await this.profileRepository.findOne({where: {id},relations:["user"]})
 
+  }
   async updateProfile(dto: UpdateProfileDto) {
     const profile = await this.profileRepository.findOne({ where: { id: dto.profileId } });
     profile.religion = { id: dto.religionId, value: '', profiles: [] };

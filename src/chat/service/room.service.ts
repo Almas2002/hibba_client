@@ -4,10 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from '../model/room.entity';
 import { Repository } from 'typeorm';
 import { IPagination } from '../../profile/interfaces/get-profile-query.interface';
+import {ProfileService} from "../../profile/profile.service";
 
 @Injectable()
 export class RoomService {
-  constructor(@InjectRepository(Room) private roomRepository: Repository<Room>) {
+  constructor(@InjectRepository(Room) private roomRepository: Repository<Room>,private profileService:ProfileService) {
   }
 
   async getRoomsForUser(userId: number, option?: IPagination) {
@@ -25,9 +26,10 @@ export class RoomService {
     return await query.getMany();
   }
 
-  async createRoom(creator: User, user: User) {
+  async createRoom(creator: User, userId: number) {
+    const profile = await this.profileService.getUserByProfileId(userId)
     const room = await this.roomRepository.save({});
-    room.users = [creator, user];
+    room.users = [creator, profile.user];
     await this.roomRepository.save(room);
     return this.getRoomsForUser(creator.id)
   }
