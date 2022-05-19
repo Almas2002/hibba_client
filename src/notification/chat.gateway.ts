@@ -61,7 +61,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     @SubscribeMessage('join-room')
     async comeInChat(socket: Socket, data: number) {
-        const messages = await this.messageService.getAllMessage(data, {limit: 10, page: 0});
+        console.log(data)
+        const messages = await this.messageService.getAllMessage(data, {limit: 10, page: 1});
         await this.joinedRoomService.create(socket.id, data, socket.data.user.id);
         await this.wss.to(socket.id).emit('messages', messages);
     }
