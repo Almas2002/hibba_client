@@ -7,10 +7,11 @@ import { RoomService } from '../service/room.service';
 import { UserDecorator } from '../../user/decorators/user.decorator';
 import { IPagination } from '../../profile/interfaces/get-profile-query.interface';
 import { User } from '../../user/user.entity';
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiTags} from '@nestjs/swagger';
 import { LeaveRoomDto } from '../dto/leave-room.dto';
 import { JoinedRoomService } from '../service/joined-room.service';
 
+@ApiTags('чат')
 @Controller('chat')
 export class ChatController {
   constructor(private messageService: MessageService, private roomService: RoomService,private joinedRoomService:JoinedRoomService) {}

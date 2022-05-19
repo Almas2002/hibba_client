@@ -7,10 +7,12 @@ import { JoinedRoom } from './model/joined-room.entity';
 import { Message } from './model/message.entity';
 import { Room } from './model/room.entity';
 import { ProfileModule } from '../profile/profile.module';
+import {ChatController} from "./controller/chat.controller";
 
 @Module({
   imports: [TypeOrmModule.forFeature([JoinedRoom, Message, Room]),ProfileModule],
   providers: [JoinedRoomService, MessageService, RoomService],
-  exports:[JoinedRoomService,MessageService,RoomService]
+  exports:[JoinedRoomService,MessageService,RoomService],
+  controllers:[ChatController]
 })
 export class ChatModule {}
