@@ -42,8 +42,8 @@ export class ChatController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post('room')
-  createRoom(@UserDecorator()creator: User, @Body()user: User) {
-    return this.roomService.createRoom(creator, user);
+  createRoom(@UserDecorator()creator: User, @Body()profileId:number) {
+    return this.roomService.createRoom(creator, profileId);
   }
 
   @Put('leave-room')
