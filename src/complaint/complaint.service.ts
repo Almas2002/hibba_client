@@ -5,7 +5,6 @@ import {Repository} from 'typeorm';
 import {CreateComplaintDto} from './dto/create-complaint.dto';
 import {ProfileService} from '../profile/profile.service';
 import {IPagination} from "../profile/interfaces/get-profile-query.interface";
-import {of} from "rxjs";
 
 @Injectable()
 export class ComplaintService {
@@ -32,6 +31,7 @@ export class ComplaintService {
         const query = await this.complaintRepository.createQueryBuilder('complaint')
             .leftJoinAndSelect('complaint.reporter', 'reporter')
             .leftJoinAndSelect('complaint.culprit', 'culprit')
+            .groupBy("complaint.id")
             .orderBy('complaint.createdAt', 'DESC')
         query.limit(limit)
         query.offset(offset)

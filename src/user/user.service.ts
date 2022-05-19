@@ -59,7 +59,7 @@ export class UserService {
     }
 
     async findUserById(id: number) {
-        return await this.userRepository.findOne({id}, {relations: ["roles"]})
+        return await this.userRepository.findOne({id}, {relations: ["roles","profile"]})
     }
 
     async getAllAdmins(role: string = 'ADMIN') {

@@ -1,4 +1,4 @@
-import {Controller, Get} from '@nestjs/common';
+import {Controller, Get, Param} from '@nestjs/common';
 import { UserService } from './user.service';
 import { MessagePattern } from '@nestjs/microservices';
 import {ApiOperation} from "@nestjs/swagger";
@@ -15,6 +15,11 @@ export class UserController {
   @Get('get-admins')
   getAdmins(){
     return this.userService.getAllAdmins()
+  }
+  @ApiOperation({ description: 'получить одного пользователя'})
+  @Get("/:id")
+  getUserById(@Param("id")id:number){
+     return this.userService.findUserById(id)
   }
 
 }

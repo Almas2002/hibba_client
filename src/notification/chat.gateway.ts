@@ -17,7 +17,7 @@ import {RoomService} from '../chat/service/room.service';
 import {JoinedRoomService} from '../chat/service/joined-room.service';
 import {TypingDto} from "./dto/typing.dto";
 
-@WebSocketGateway({namespace: '/', cors: true})
+@WebSocketGateway({namespace: '/', cors: true,})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
     constructor(private connectedUserService: ConnectedUserService,
                 private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService) {
@@ -31,9 +31,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     async handleConnection(socket: Socket, data: any) {
         let token;
+        console.log("hello")
         if (!socket.handshake.query.token) {
             return null;
         }
+        console.log("hello")
         try {
             token = verify(`${socket.handshake.query.token}`, 'hello world');
             socket.data.user = token;
