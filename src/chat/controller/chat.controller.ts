@@ -10,6 +10,7 @@ import { User } from '../../user/user.entity';
 import {ApiBearerAuth, ApiOperation, ApiTags} from '@nestjs/swagger';
 import { LeaveRoomDto } from '../dto/leave-room.dto';
 import { JoinedRoomService } from '../service/joined-room.service';
+import {CreateChatDto} from "../dto/create-chat.dto";
 
 @ApiTags('чат')
 @Controller('chat')
@@ -43,8 +44,8 @@ export class ChatController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post('room')
-  createRoom(@UserDecorator()creator: User, @Body()profileId:number) {
-    return this.roomService.createRoom(creator, profileId);
+  createRoom(@UserDecorator()creator: User, @Body()dto:CreateChatDto) {
+    return this.roomService.createRoom(creator, dto.profileId);
   }
 
   @Put('leave-room')

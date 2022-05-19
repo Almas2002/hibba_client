@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {HttpException, Injectable} from '@nestjs/common';
 import { User } from '../../user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from '../model/room.entity';
@@ -28,6 +28,9 @@ export class RoomService {
 
   async createRoom(creator: User, userId: number) {
     const profile = await this.profileService.getUserByProfileId(userId)
+    if (!profile){
+      throw new HttpException("профиль не найден",404)
+    }
     const room = await this.roomRepository.save({});
     room.users = [creator, profile.user];
     await this.roomRepository.save(room);
