@@ -35,13 +35,13 @@ export class RoomService {
             throw new HttpException("профиль не найден", 404)
         }
         let combination = profile.user.id + userId
-       // const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
-        const query = this.roomRepository.createQueryBuilder("room")
-            .leftJoinAndSelect("room.users","users")
-            .leftJoinAndSelect("users.profile","profile")
-            .leftJoinAndSelect("profile.avatar","avatar")
-            .where("room.combination = :combination",{combination})
-        const candidate  = query.getOne()
+        const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
+       //  const query = this.roomRepository.createQueryBuilder("room")
+       //      .leftJoinAndSelect("room.users","users")
+       //      .leftJoinAndSelect("users.profile","profile")
+       //      .leftJoinAndSelect("profile.avatar","avatar")
+       //      .where("room.combination = :combination",{combination})
+       //  const candidate  = query.getOne()
 
         if (candidate){
             return candidate
