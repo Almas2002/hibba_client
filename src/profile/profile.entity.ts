@@ -32,7 +32,7 @@ export class Profile extends BaseEntity {
   age: number;
   @Column()
   firstName: string;
-  @OneToOne(()=>ProfilePhotos,photo=>photo,{onDelete:"CASCADE"})
+  @OneToOne(()=>ProfilePhotos,photo=>photo.profileAvatar,{onDelete:"CASCADE"})
   @JoinColumn()
   avatar:ProfilePhotos
   @Column()
