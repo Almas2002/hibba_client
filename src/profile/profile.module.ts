@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,9 +11,11 @@ import { CategoryModule } from '../category/category.module';
 import { RegionModule } from '../region/region.module';
 import { ReligionModule } from '../religion/religion.module';
 import { GenderModule } from '../gender/gender.module';
+import {NotificationModule} from "../notification/notification.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Profile,Like,ProfilePhotos]),HobbyModule,FileModule,CategoryModule,RegionModule,ReligionModule,GenderModule],
+  imports: [TypeOrmModule.forFeature([Profile,Like,ProfilePhotos]),HobbyModule,
+    FileModule,CategoryModule,RegionModule,ReligionModule,GenderModule,forwardRef(()=>NotificationModule)],
   providers:[ProfileService],
   controllers:[ProfileController],
   exports:[ProfileService]

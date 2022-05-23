@@ -18,7 +18,7 @@ export class ConnectedUserService {
   }
 
   async findByUserId(id: number) {
-    return await this.connectedUserRepository.findOne({ where: { user: { id } } });
+    return await this.connectedUserRepository.findOne({ where: { user: { id }},relations:["user","user.profile"] });
   }
 
   async deleteBySocketId(socketId: string) {

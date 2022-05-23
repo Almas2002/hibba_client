@@ -5,10 +5,11 @@ import {Room} from '../model/room.entity';
 import {Repository} from 'typeorm';
 import {IPagination} from '../../profile/interfaces/get-profile-query.interface';
 import {ProfileService} from "../../profile/profile.service";
+import {SemiProfileService} from "./semi-profile.service";
 
 @Injectable()
 export class RoomService {
-    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: ProfileService) {
+    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService) {
     }
 
     async getRoomsForUser(userId: number, option?: IPagination) {

@@ -42,7 +42,7 @@ require('dotenv').config();
       envFilePath: '.env',
     }),
     ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, 'static'),
+      rootPath: path.resolve(__dirname,'static'),
     }), AuthModule, UserModule, FileModule, HobbyModule, CategoryModule,
     ProfileModule, RoleModule, ReligionModule, GenderModule, ComplaintModule, RegionModule,NotificationModule,ChatModule
   ],

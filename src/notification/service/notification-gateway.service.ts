@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { ChatGateway } from '../chat.gateway';
 import { ConnectedUserService } from '../../socket/socket.service';
+import {Like} from "../../profile/like.entity";
 
 @Injectable()
 export class NotificationGatewayService {
@@ -22,9 +23,19 @@ export class NotificationGatewayService {
     const notification = await this.notificationService.createNotificationForOneUser(message, userId);
     const users = await this.connectedUserService.findAllUser();
     for (const user of users) {
-      if (user.id == userId) {
+      if (user.user.id == userId) {
         this.notificationGateway.sendToUser(user.socketId, notification);
       }
     }
   }
+  async likeNotification(message:string,like:Like,userId:number){
+    const notification = await this.notificationService.createLikeNotification(message,userId,like)
+    const users = await this.connectedUserService.findAllUser();
+    for (const user of users) {
+      if (user.user.id == userId) {
+        this.notificationGateway.sendToUser(user.socketId, notification);
+      }
+    }
+  }
+
 }

@@ -7,8 +7,7 @@ import { UserLoginDto } from './dto/user-login.dto';
 @ApiTags('Авторизация')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {
-  }
+  constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'login пользователя' })
   @ApiResponse({ status: 201 })

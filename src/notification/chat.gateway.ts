@@ -16,11 +16,12 @@ import {MessageService} from '../chat/service/message.service';
 import {RoomService} from '../chat/service/room.service';
 import {JoinedRoomService} from '../chat/service/joined-room.service';
 import {TypingDto} from "./dto/typing.dto";
+import {NotificationService} from "./service/notification.service";
 
-@WebSocketGateway({namespace: '/', cors: {origin:"*",credentials: true,methods: ["GET", "POST"],}})
+@WebSocketGateway({namespace: '/', cors: {origin: "*", credentials: true, methods: ["GET", "POST"],}})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
     constructor(private connectedUserService: ConnectedUserService,
-                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService) {
+                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService, private notificationService: NotificationService) {
     }
 
     @WebSocketServer() wss: Server;
@@ -31,11 +32,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     async handleConnection(socket: Socket, data: any) {
         let token;
-        console.log("hello")
         if (!socket.handshake.query.token) {
             return null;
         }
-        console.log("hello")
         try {
             token = verify(`${socket.handshake.query.token}`, 'hello world');
             socket.data.user = token;
@@ -51,11 +50,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         if (!room) {
             await this.wss.emit('Error', 'такого канала нету');
         }
+        const u = room.joinedUsers.filter(u => u.user.id != socket.data.user)[0]
         const createMessage = await this.messageService.createMessage({...data, userId: socket.data.user.id});
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
-
+        let connectedUsers = null
+        let notification = null
         for (const user of joinedUsers) {
-            await this.wss.to(user.socketId).emit('messageAdded', createMessage);
+            if (user.user.id != u.user.id) {
+                connectedUsers = await this.connectedUserService.findByUserId(u.user.id)
+                notification = await this.notificationService.createMessageNotification(`у вас новое сообщение от :${user.user.profile.firstName}`, createMessage, u.user.id)
+                if (connectedUsers) {
+                    await this.sendToUser(u.socketId,notification)
+                }
+            } else {
+                await this.wss.to(user.socketId).emit('messageAdded', createMessage);
+            }
         }
     }
 
@@ -63,7 +72,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     async comeInChat(socket: Socket, data: number) {
         console.log(data)
         const messages = await this.messageService.getAllMessage(data, {limit: 10, page: 1});
-        await this.joinedRoomService.create(socket.id,socket.data.user.id, data);
+        await this.joinedRoomService.create(socket.id, socket.data.user.id, data);
         await this.wss.to(socket.id).emit('messages', messages);
     }
 
@@ -81,7 +90,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
 
         for (const user of joinedUsers) {
-            if (user.id !=socket.data.user){
+            if (user.id != socket.data.user) {
                 await this.wss.to(user.socketId).emit('typing', data);
             }
         }

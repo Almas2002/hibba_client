@@ -7,11 +7,12 @@ import { CreateMessageDto } from '../dto/create-message.dto';
 import { RoomService } from './room.service';
 import { ProfileService } from '../../profile/profile.service';
 import { Profile } from '../../profile/profile.entity';
+import {SemiProfileService} from "./semi-profile.service";
 
 @Injectable()
 export class MessageService {
   constructor(@InjectRepository(Message) private messageRepository: Repository<Message>,
-              private roomService: RoomService, private profileService: ProfileService) {
+              private roomService: RoomService, private profileService: SemiProfileService) {
   }
 
   async createMessage(message: CreateMessageDto): Promise<Message> {
