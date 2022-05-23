@@ -18,6 +18,7 @@ import {RegionService} from '../region/region.service';
 import {ReligionService} from '../religion/religion.service';
 import {GenderService} from '../gender/gender.service';
 import {NotificationGatewayService} from "../notification/service/notification-gateway.service";
+import {log} from "util";
 
 @Injectable()
 export class ProfileService {
@@ -29,57 +30,61 @@ export class ProfileService {
     }
 
     async createProfile(data: CreateProfileDto, file: any[]) {
-        const images: string[] = [];
-        const candidate = await this.profileRepository.findOne({id: data.userId});
-        if (candidate) {
-            throw new HttpException('у вас уже есть профиль', 400);
-        }
-        const candidateCategory = await this.categoryService.findOne(data.categoryId);
-        const candidateRegion = await this.regionService.findOne(data.regionId);
-        const candidateReligion = await this.religionService.findOne(data.religionId);
-        const candidateGender = await this.genderService.findOne(data.genderId);
-
-        if (!candidateCategory || !candidateGender || !candidateRegion || !candidateReligion) {
-            throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
-        }
-        const profile = await this.profileRepository.save({
-            ...data,
-            user: {id: data.userId},
-            region: {id: data.regionId},
-            gender: {id: data.genderId},
-            category: {id: data.categoryId},
-            religion: {id: data.religionId},
-        });
-
-        if (file?.length) {
-            for (const f of file) {
-                images.push(await this.fileService.createFile(f));
+        try {
+            const images: string[] = [];
+            const candidate = await this.profileRepository.findOne({id: data.userId});
+            if (candidate) {
+                throw new HttpException('у вас уже есть профиль', 400);
             }
-        }
-        let hobby;
-        profile.hobbies = [];
-        if (data.hobby?.length) {
-            const len = data.hobby.split(',')
-            for (const h of len) {
-                hobby = await this.hobbyService.getOneHobby(+h);
-                if (hobby) {
-                    profile.hobbies.push(hobby);
+            const candidateCategory = await this.categoryService.findOne(data.categoryId);
+            const candidateRegion = await this.regionService.findOne(data.regionId);
+            const candidateReligion = await this.religionService.findOne(data.religionId);
+            const candidateGender = await this.genderService.findOne(data.genderId);
+
+            if (!candidateCategory || !candidateGender || !candidateRegion || !candidateReligion) {
+                throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
+            }
+            const profile = await this.profileRepository.save({
+                ...data,
+                user: {id: data.userId},
+                region: {id: data.regionId},
+                gender: {id: data.genderId},
+                category: {id: data.categoryId},
+                religion: {id: data.religionId},
+            });
+
+            if (file?.length) {
+                for (const f of file) {
+                    images.push(await this.fileService.createFile(f));
                 }
             }
-        }
-        let photo;
-        if (file?.length) {
-            for (let i = 0; i < images.length; i++) {
-                if (i == 0) {
-                    photo = await this.profilePhotosRepository.save({image: images[i], profile});
-                } else {
-                    await this.profilePhotosRepository.save({image: images[i], profile});
+            let hobby;
+            profile.hobbies = [];
+            if (data.hobby?.length) {
+                const len = data.hobby.split(',')
+                for (const h of len) {
+                    hobby = await this.hobbyService.getOneHobby(+h);
+                    if (hobby) {
+                        profile.hobbies.push(hobby);
+                    }
                 }
-
             }
+            let photo;
+            if (file?.length) {
+                for (let i = 0; i < images.length; i++) {
+                    if (i == 0) {
+                        photo = await this.profilePhotosRepository.save({image: images[i], profile});
+                    } else {
+                        await this.profilePhotosRepository.save({image: images[i], profile});
+                    }
+
+                }
+            }
+            await this.updateAvatar(data.userId, photo.id)
+            await this.profileRepository.save(profile);
+        }catch (e) {
+            console.log(e)
         }
-        await this.updateAvatar(data.userId, photo.id)
-        await this.profileRepository.save(profile);
     }
 
     async getUserProfile(userId: number) {
