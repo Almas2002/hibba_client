@@ -34,7 +34,12 @@ export class RoomService {
         if (!profile) {
             throw new HttpException("профиль не найден", 404)
         }
-        const room = await this.roomRepository.save({});
+        let combination = profile.user.id + userId
+        const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
+        if (candidate){
+            return candidate
+        }
+        const room = await this.roomRepository.save({combination});
         room.users = [creator, profile.user];
         await this.roomRepository.save(room);
         return this.getRoomsForUser(creator.id)
