@@ -5,7 +5,7 @@ export class BaseEntity {
   createdAt: Date;
   @Column({ type: 'date', default: () => 'CURRENT_TIMESTAMP' ,})
   updateAt: Date;
-
+  //a
   @BeforeUpdate()
   updateTimestamp() {
     this.updateAt = new Date()
