@@ -18,7 +18,7 @@ import {RegionService} from '../region/region.service';
 import {ReligionService} from '../religion/religion.service';
 import {GenderService} from '../gender/gender.service';
 import {NotificationGatewayService} from "../notification/service/notification-gateway.service";
-import {log} from "util";
+import {groupBy} from "rxjs";
 
 @Injectable()
 export class ProfileService {
@@ -82,7 +82,7 @@ export class ProfileService {
             }
             await this.updateAvatar(data.userId, photo.id)
             await this.profileRepository.save(profile);
-        }catch (e) {
+        } catch (e) {
             console.log(e)
         }
     }
@@ -266,6 +266,91 @@ export class ProfileService {
         }
         profile.avatar = photo
         await this.profileRepository.save(profile);
+    }
+
+    async getStatisticAge(from: number, to?: number,) {
+        const query = this.profileRepository.createQueryBuilder("profile")
+        if (to) {
+            query.select(`COUNT(profile.age)`, `count`)
+                .andWhere("profile.age >= :from AND profile.age < :to", {from, to})
+        } else {
+            query.select(`COUNT(profile.age)`, `count`)
+                .andWhere("profile.age >= :from", {from})
+        }
+        const {count} = await query.getRawOne()
+        return count
+    }
+    private async getCountProfiles(){
+        return await this.profileRepository.createQueryBuilder("count").getCount()
+    }
+    async getStatisticCity(city?: string, another?: string[]) {
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoin("profile.region", "region")
+            .select("count(profile.id)", "count")
+            .addSelect("region.value", "value")
+            .groupBy("region.value")
+        return  await query.getRawMany()
+
+    }
+    async getStatisticsStatus(){
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoin("profile.category", "category")
+            .select("count(profile.id)", "count")
+            .addSelect("category.value", "value")
+            .groupBy("category.value")
+        return  await query.getRawMany()
+
+    }
+    async getStatisticsGender(){
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoin("profile.gender", "gender")
+            .select("count(profile.id)", "count")
+            .addSelect("gender.value", "value")
+            .groupBy("gender.value")
+        return  await query.getRawMany()
+
+    }
+    async getStatisticsHobby(){
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoin("profile.hobbies", "hobby")
+            .select("count(profile.id)", "count")
+            .addSelect("hobby.value", "value")
+            .groupBy("hobby.value")
+        return  await query.getRawMany()
+
+    }
+    async getStatisticsReligion(){
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoin("profile.religion", "religion")
+            .select("count(profile.id)", "count")
+            .addSelect("religion.value", "value")
+            .groupBy("religion.value")
+        return await query.getRawMany()
+
+    }
+    async statisticAge() {
+        const count = await this.getCountProfiles()  //100
+
+        const range1822 = await this.getStatisticAge(18, 22) / +count
+        const range2225 = await this.getStatisticAge(22, 25) / +count
+        const range2530 = await this.getStatisticAge(25, 30) / +count
+        const range3040 = await this.getStatisticAge(30, 40) / +count
+        const range4050 = await this.getStatisticAge(40, 50) / +count
+        const range5065 = await this.getStatisticAge(50, 65) / +count
+        const range65 = await this.getStatisticAge(65) / +count
+        return {range1822, range2225, range2530, range3040, range4050, range5065, range65}
+
+    }
+
+    async statistics() {
+        const ages = await this.statisticAge()
+        const religions = await this.getStatisticsReligion()
+        const genders = await this.getStatisticsGender()
+        const hobbies = await  this.getStatisticsHobby()
+        const status = await this.getStatisticsStatus()
+        const cities = await this.getStatisticCity()
+        const count = await this.getCountProfiles()
+        return {ages,religions,genders,hobbies,status,cities,count}
     }
 
 }
