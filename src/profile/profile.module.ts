@@ -12,10 +12,11 @@ import { RegionModule } from '../region/region.module';
 import { ReligionModule } from '../religion/religion.module';
 import { GenderModule } from '../gender/gender.module';
 import {NotificationModule} from "../notification/notification.module";
+import {AuthModule} from "../auth/auth.module";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Profile,Like,ProfilePhotos]),HobbyModule,
-    FileModule,CategoryModule,RegionModule,ReligionModule,GenderModule,forwardRef(()=>NotificationModule)],
+    FileModule,CategoryModule,RegionModule,ReligionModule,GenderModule,forwardRef(()=>NotificationModule),AuthModule],
   providers:[ProfileService],
   controllers:[ProfileController],
   exports:[ProfileService]
