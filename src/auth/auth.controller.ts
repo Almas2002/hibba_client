@@ -18,7 +18,7 @@ export class AuthController {
     return { access_token: response.access_token };
   }
 
-  @ApiOperation({ summary: 'login пользователя' })
+  @ApiOperation({ summary: 'registration пользователя' })
   @ApiResponse({ status: 201 })
   @Post('registration')
   async registration(@Body()data: UserLoginDto, @Res({ passthrough: true })res) {

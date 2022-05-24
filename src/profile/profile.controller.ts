@@ -21,6 +21,9 @@ import {UpdateAvatarDto} from './dto/update-avatar.dto';
 import {RemoveImageDto} from './dto/remove-image.dto';
 import {ApiImplicitFile} from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
 import {ApiBearerAuth, ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
+import {RoleGuards} from "../auth/guard/role.guard";
+import {Role} from "../user/decorators/role.decorator";
+import {RoleEnums} from "../enums/role.enums";
 
 @ApiTags('profile')
 @Controller('profile')
@@ -115,6 +118,9 @@ export class ProfileController {
         return this.profileService.deleteImage(dto);
     }
 
+    @ApiOperation({description: 'Статистика'})
+    @Role(RoleEnums.ADMIN,RoleEnums.SUPER_ADMIN)
+    @UseGuards(RoleGuards)
     @Get("statistic")
     getStatics(@Body('to')to: number, @Body('city')from: string) {
         return this.profileService.statistics()
