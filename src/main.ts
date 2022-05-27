@@ -7,7 +7,7 @@ import { MyValidationPipe } from './pipes/MyValidatorPipe';
 import * as bodyParser from 'body-parser'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule,{cors:{origin:["*"],credentials:true}});
+  const app = await NestFactory.create(AppModule,{cors:{origin:["http://146.190.26.252/","*"],credentials:true}});
   app.use(requestIp.mw());
   app.use(cookieParser());
   const config = new DocumentBuilder()
