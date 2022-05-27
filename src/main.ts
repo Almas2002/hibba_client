@@ -8,6 +8,11 @@ import * as bodyParser from 'body-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{cors:{origin:["http://146.190.26.252/","*"],credentials:true}});
+  app.enableCors({
+    origin:["*","http://146.190.26.252/"],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials:true
+  })
   app.use(requestIp.mw());
   app.use(cookieParser());
   const config = new DocumentBuilder()
