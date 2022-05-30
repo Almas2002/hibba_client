@@ -14,9 +14,9 @@ export class AuthController {
     @ApiResponse({status: 201})
     @Post('login')
     async login(@Body()data: UserLoginDto, @Res({passthrough: true})res) {
-      const response = await this.authService.login(data);
-      res.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-      return response
+        const response = await this.authService.login(data);
+        res.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+        return response
     }
 
     @ApiOperation({summary: 'registration пользователя'})
@@ -38,14 +38,14 @@ export class AuthController {
         return res.access_token;
     }
 
-  @ApiOperation({summary: 'refresh for Azim'})
-  @ApiResponse({status: 201})
-  @Post('refresh')
-  async AzimRefresh(@Body('refresh_token')refreshToken:string, @Res({passthrough: true})response) {
-    const res = await this.authService.refresh(refreshToken);
-    response.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-    return res;
-  }
+    @ApiOperation({summary: 'refresh for Azim'})
+    @ApiResponse({status: 201})
+    @Post('refresh')
+    async AzimRefresh(@Body('refresh_token')refreshToken: string, @Res({passthrough: true})response) {
+        const res = await this.authService.refresh(refreshToken);
+        response.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+        return res;
+    }
 
     @ApiOperation({summary: 'logout пользователя'})
     @ApiResponse({status: 201})
