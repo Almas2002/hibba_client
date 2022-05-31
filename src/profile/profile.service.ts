@@ -380,7 +380,7 @@ export class ProfileService {
             .leftJoin('profile.user', 'user')
             .addSelect('user.phone')
             .leftJoinAndSelect('user.roles', 'roles')
-            .andWhere('roles.value = WORKER')
+            .andWhere('roles.value = :WORKER',{WORKER:"WORKER"})
             .groupBy('profile.id')
             .addGroupBy('user.id')
             .addGroupBy('roles.id')
