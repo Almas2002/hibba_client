@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn,} from 'typeorm';
-import { Profile } from '../profile/profile.entity';
+import { Profile } from '../profile/models/profile.entity';
 import { BaseEntity } from '../baseEntity';
 export enum ComplainStatus{
   NEW = "NEW",

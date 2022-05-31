@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateMessageDto } from '../dto/create-message.dto';
 import { RoomService } from './room.service';
 import { ProfileService } from '../../profile/profile.service';
-import { Profile } from '../../profile/profile.entity';
+import { Profile } from '../../profile/models/profile.entity';
 import {SemiProfileService} from "./semi-profile.service";
 
 @Injectable()

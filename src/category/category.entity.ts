@@ -1,6 +1,6 @@
 import { Gender } from '../gender/gender.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Profile } from '../profile/profile.entity';
+import { Profile } from '../profile/models/profile.entity';
 
 @Entity()
 export class Category {

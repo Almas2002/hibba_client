@@ -1,5 +1,5 @@
 import { Gender } from '../gender/gender.entity';
-import { Profile } from '../profile/profile.entity';
+import { Profile } from '../profile/models/profile.entity';
 import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

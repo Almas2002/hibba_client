@@ -1,11 +1,11 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {Profile} from './profile.entity';
+import {Profile} from './models/profile.entity';
 import {Repository} from 'typeorm';
 import {CreateProfileDto} from './dto/create-profile.dto';
 import {HobbyService} from '../hobby/hobby.service';
 import {GetProfileQueryInterface, IPagination} from './interfaces/get-profile-query.interface';
-import {Like} from './like.entity';
+import {Like} from './models/like.entity';
 import {LikeProfileDto} from './dto/like-profile.dto';
 import {ProfilePhotos} from './profile-photos.entity';
 import {UpdateProfileDto} from './dto/update-profile.dto';
@@ -19,6 +19,10 @@ import {ReligionService} from '../religion/religion.service';
 import {GenderService} from '../gender/gender.service';
 import {NotificationGatewayService} from "../notification/service/notification-gateway.service";
 import {groupBy} from "rxjs";
+import {UserService} from "../user/user.service";
+import {AuthService} from "../auth/auth.service";
+import {CreateWorkerDto} from "./dto/create-worker.dto";
+import {Place} from "./models/place.entity";
 
 @Injectable()
 export class ProfileService {
@@ -26,7 +30,8 @@ export class ProfileService {
                 @InjectRepository(Like) private likeRepository: Repository<Like>
         , private hobbyService: HobbyService, @InjectRepository(ProfilePhotos) private profilePhotosRepository: Repository<ProfilePhotos>,
                 private fileService: FileService, private categoryService: CategoryService, private regionService: RegionService,
-                private religionService: ReligionService, private genderService: GenderService, private notificationService: NotificationGatewayService) {
+                private religionService: ReligionService, private genderService: GenderService, private notificationService: NotificationGatewayService
+        , private authService: AuthService, @InjectRepository(Place) private placeRepository: Repository<Place>) {
     }
 
     async createProfile(data: CreateProfileDto, file: any[]) {
@@ -280,46 +285,52 @@ export class ProfileService {
         const {count} = await query.getRawOne()
         return count
     }
-    private async getCountProfiles(){
+
+    private async getCountProfiles() {
         return await this.profileRepository.createQueryBuilder("count").getCount()
     }
+
     async getStatisticCity(city?: string, another?: string[]) {
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoin("profile.region", "region")
             .select("count(profile.id)", "count")
             .addSelect("region.value", "value")
             .groupBy("region.value")
-        return  await query.getRawMany()
+        return await query.getRawMany()
 
     }
-    async getStatisticsStatus(){
+
+    async getStatisticsStatus() {
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoin("profile.category", "category")
             .select("count(profile.id)", "count")
             .addSelect("category.value", "value")
             .groupBy("category.value")
-        return  await query.getRawMany()
+        return await query.getRawMany()
 
     }
-    async getStatisticsGender(){
+
+    async getStatisticsGender() {
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoin("profile.gender", "gender")
             .select("count(profile.id)", "count")
             .addSelect("gender.value", "value")
             .groupBy("gender.value")
-        return  await query.getRawMany()
+        return await query.getRawMany()
 
     }
-    async getStatisticsHobby(){
+
+    async getStatisticsHobby() {
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoin("profile.hobbies", "hobby")
             .select("count(profile.id)", "count")
             .addSelect("hobby.value", "value")
             .groupBy("hobby.value")
-        return  await query.getRawMany()
+        return await query.getRawMany()
 
     }
-    async getStatisticsReligion(){
+
+    async getStatisticsReligion() {
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoin("profile.religion", "religion")
             .select("count(profile.id)", "count")
@@ -328,6 +339,7 @@ export class ProfileService {
         return await query.getRawMany()
 
     }
+
     async statisticAge() {
         const count = await this.getCountProfiles()  //100
 
@@ -346,11 +358,39 @@ export class ProfileService {
         const ages = await this.statisticAge()
         const religions = await this.getStatisticsReligion()
         const genders = await this.getStatisticsGender()
-        const hobbies = await  this.getStatisticsHobby()
+        const hobbies = await this.getStatisticsHobby()
         const status = await this.getStatisticsStatus()
         const cities = await this.getStatisticCity()
         const count = await this.getCountProfiles()
-        return {ages,religions,genders,hobbies,status,cities,count}
+        return {ages, religions, genders, hobbies, status, cities, count}
     }
+
+    async createWorker(dto: CreateWorkerDto) {
+        const user = await this.authService.createWorker({password: dto.password, phone: dto.phone})
+        const profile = await this.profileRepository.save({user, ...dto})
+         await this.placeRepository.save({profile, city: {id: dto.cityId}, ...dto})
+    }
+
+    async getWorkers() {
+        const query = await this.profileRepository.createQueryBuilder("profile")
+            .select('profile.id')
+            .addSelect('profile.firstName')
+            .addSelect('profile.secondName')
+            .addSelect('profile.iin')
+            .leftJoin('profile.user', 'user')
+            .addSelect('user.phone')
+            .leftJoinAndSelect('user.roles', 'roles')
+            .andWhere('roles.value = WORKER')
+            .groupBy('profile.id')
+            .addGroupBy('user.id')
+            .addGroupBy('roles.id')
+
+        return await query.getMany()
+        //name fisrtname secondname iin role
+    }
+    async getOneWorker(id:number){
+        return await this.profileRepository.findOne({where:{id},relations:["user","place"]})
+    }
+
 
 }

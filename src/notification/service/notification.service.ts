@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {Notification, NotificationType} from '../notification.entity';
 import { Repository } from 'typeorm';
-import {Like} from "../../profile/like.entity";
+import {Like} from "../../profile/models/like.entity";
 import {Message} from "../../chat/model/message.entity";
 
 @Injectable()

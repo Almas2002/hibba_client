@@ -1,7 +1,7 @@
 import { Profile } from './profile.entity';
 import {Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
-import { BaseEntity } from '../baseEntity';
-import {Notification} from "../notification/notification.entity";
+import { BaseEntity } from '../../baseEntity';
+import {Notification} from "../../notification/notification.entity";
 
 @Entity()
 export class Like extends BaseEntity {

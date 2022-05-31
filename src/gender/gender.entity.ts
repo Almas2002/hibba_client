@@ -1,7 +1,7 @@
 import { Category } from '../category/category.entity';
 import { Hobby } from '../hobby/hobby.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Profile } from '../profile/profile.entity';
+import { Profile } from '../profile/models/profile.entity';
 
 @Entity()
 export class Gender {

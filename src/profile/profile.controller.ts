@@ -24,6 +24,7 @@ import {ApiBearerAuth, ApiOperation, ApiQuery, ApiTags} from '@nestjs/swagger';
 import {RoleGuards} from "../auth/guard/role.guard";
 import {Role} from "../user/decorators/role.decorator";
 import {RoleEnums} from "../enums/role.enums";
+import {CreateWorkerDto} from "./dto/create-worker.dto";
 
 @ApiTags('profile')
 @Controller('profile')
@@ -119,10 +120,26 @@ export class ProfileController {
     }
 
     @ApiOperation({description: 'Статистика'})
-    @Role(RoleEnums.ADMIN,RoleEnums.SUPER_ADMIN)
+    @Role(RoleEnums.ADMIN, RoleEnums.SUPER_ADMIN)
     @UseGuards(RoleGuards)
     @Get("statistic")
     getStatics(@Body('to')to: number, @Body('city')from: string) {
         return this.profileService.statistics()
+    }
+
+
+    @Post('workers')
+    createWorker(@Body()dto: CreateWorkerDto) {
+        return this.profileService.createWorker(dto)
+    }
+
+    @Get('workers')
+    getWorkers() {
+        return this.profileService.getWorkers()
+    }
+
+    @Get('workers/:id')
+    getOneWorker(@Param('id')id: number) {
+        return this.profileService.getOneWorker(id)
     }
 }

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from '../role/role.entity';
-import { Profile } from '../profile/profile.entity';
+import { Profile } from '../profile/models/profile.entity';
 import { ConnectionUser } from '../socket/connection-user.entity';
 import { Room } from '../chat/model/room.entity';
 import { JoinedRoom } from '../chat/model/joined-room.entity';

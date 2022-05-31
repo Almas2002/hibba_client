@@ -1,6 +1,6 @@
 import { User } from '../user/user.entity';
 import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {Like} from "../profile/like.entity";
+import {Like} from "../profile/models/like.entity";
 import {Message} from "../chat/model/message.entity";
 
 export enum NotificationType{

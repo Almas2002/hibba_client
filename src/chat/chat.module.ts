@@ -8,7 +8,7 @@ import { Message } from './model/message.entity';
 import { Room } from './model/room.entity';
 import { ProfileModule } from '../profile/profile.module';
 import {ChatController} from "./controller/chat.controller";
-import {Profile} from "../profile/profile.entity";
+import {Profile} from "../profile/models/profile.entity";
 import {SemiProfileService} from "./service/semi-profile.service";
 
 @Module({

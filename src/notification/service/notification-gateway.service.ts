@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { ChatGateway } from '../chat.gateway';
 import { ConnectedUserService } from '../../socket/socket.service';
-import {Like} from "../../profile/like.entity";
+import {Like} from "../../profile/models/like.entity";
 
 @Injectable()
 export class NotificationGatewayService {
