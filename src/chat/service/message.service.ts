@@ -18,13 +18,13 @@ export class MessageService {
   async createMessage(message: CreateMessageDto): Promise<Message> {
     let room = await this.roomService.getRoom(message.roomId);
     let profile: Profile;
-    for (const joined of room.users) {
-      if (joined.id != message.userId) {
-        profile = await this.profileService.getUserProfile(joined.id);
-      } else {
-        throw new HttpException('нет пользователя', 400);
-      }
-    }
+    // for (const joined of room.users) {
+    //   if (joined.id != message.userId) {
+    //     profile = await this.profileService.getUserProfile(joined.id);
+    //   } else {
+    //     throw new HttpException('нет пользователя', 400);
+    //   }
+    // }
     // for (const u of profile.likedUsers) {
     //   if (u.profile.user.id == message.userId) {
     //     if (u.mutually){
