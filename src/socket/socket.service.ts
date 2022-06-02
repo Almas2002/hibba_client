@@ -14,7 +14,7 @@ export class ConnectedUserService {
   }
 
   async findAllUser() {
-    return this.connectedUserRepository.find();
+    return this.connectedUserRepository.find({relations:["user"]});
   }
 
   async findByUserId(id: number) {
