@@ -18,26 +18,32 @@ export class MessageService {
   async createMessage(message: CreateMessageDto): Promise<Message> {
     let room = await this.roomService.getRoom(message.roomId);
     let profile: Profile;
-    for (const joined of room.joinedUsers) {
-      if (joined.user.id != message.userId) {
-        profile = await this.profileService.getUserProfile(joined.user.id);
+    for (const joined of room.users) {
+      if (joined.id != message.userId) {
+        profile = await this.profileService.getUserProfile(joined.id);
       } else {
         throw new HttpException('нет пользователя', 400);
       }
     }
-    for (const u of profile.likedUsers) {
-      if (u.profile.user.id == message.userId) {
-        if (u.mutually){
-          return await this.messageRepository.save({
-            ...message,
-            user: { id: message.userId },
-            room: { id: message.roomId },
-          });
-        }
-      }
+    // for (const u of profile.likedUsers) {
+    //   if (u.profile.user.id == message.userId) {
+    //     if (u.mutually){
+    //       return await this.messageRepository.save({
+    //         ...message,
+    //         user: { id: message.userId },
+    //         room: { id: message.roomId },
+    //       });
+    //     }
+    //   }
+    //
+    // }
 
-    }
-    throw new HttpException('Вас не лайкнули',403)
+    return await this.messageRepository.save({
+      ...message,
+      user: { id: message.userId },
+      room: { id: message.roomId },
+    });
+   // throw new HttpException('Вас не лайкнули',403)
   }
 
   async getAllMessage(id: number, pagination: IPagination,newMessages?:boolean) {
