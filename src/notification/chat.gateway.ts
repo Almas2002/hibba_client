@@ -50,8 +50,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         if (!room) {
             await this.wss.emit('Error', 'такого канала нету');
         }
-        const u = room.joinedUsers.filter(u => u.user.id != socket.data.user)[0]
+
         const createMessage = await this.messageService.createMessage({...data, userId: socket.data.user.id});
+        const u = room.joinedUsers.filter(u => u.user.id != socket.data.user)[0]
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
         let connectedUsers = null
         let notification = null
