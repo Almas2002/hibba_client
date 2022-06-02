@@ -21,7 +21,7 @@ export class Message {
   user: User;
   @ManyToOne(() => Room, room => room.messages)
   room: Room;
-  @Column()
+  @Column({default:false})
   read:boolean
   @CreateDateColumn()
   createAt: Date;
