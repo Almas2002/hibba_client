@@ -48,7 +48,8 @@ export class RoomService {
         }
         const room = await this.roomRepository.save({combination});
         room.users = [creator, profile.user];
-        return  await this.roomRepository.save(room);
+        const r = await this.roomRepository.save(room);
+        return  await this.roomRepository.findOne({where:{id:room.id}})
     }
 
     async getRoom(id: number): Promise<Room> {
