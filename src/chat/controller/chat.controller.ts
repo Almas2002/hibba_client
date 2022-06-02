@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import { MessageService } from '../service/message.service';
 import { AuthGuard } from '../../auth/guard/auth.guard';
 import { CreateMessageDto } from '../dto/create-message.dto';
@@ -27,9 +27,9 @@ export class ChatController {
   }
 
   @ApiOperation({ summary: 'взять сообщение одной комнаты' })
-  @Get('message')
-  getMessages(@Body()data: GetMessagesDto, @Query()query: GetMessageQuery) {
-    return this.messageService.getAllMessage(data.roomId, { ...query }, query.new);
+  @Get('message/:roomId')
+  getMessages(@Param('roomId')roomId:number, @Query()query: GetMessageQuery) {
+    return this.messageService.getAllMessage(roomId, { ...query }, query.new);
   }
 
   @ApiOperation({ summary: 'получить чаты' })
