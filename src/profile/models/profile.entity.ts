@@ -45,6 +45,9 @@ export class Profile extends BaseEntity {
     @ManyToMany(() => Hobby, hobby => hobby.users)
     @JoinTable({name: 'profile_hobbies__hobby_profiles'})
     hobbies: Hobby[];
+
+    @Column({nullable:true})
+    middleName:string
     // мои репорты
     @OneToMany(() => Complaint, complaint => complaint.reporter)
     sendReports: Complaint[];

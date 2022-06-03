@@ -95,7 +95,8 @@ export class ProfileService {
     async getUserProfile(userId: number) {
         return await this.profileRepository.findOne({
             where: {user: {id: userId}},
-            relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers', 'myLikes.likedProfile', 'likedUsers.profile', 'religion', 'photos', 'avatar', 'region'],
+            relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers', 'myLikes.likedProfile',
+                'likedUsers.profile', 'religion', 'photos', 'avatar', 'region','user'],
         });
     }
 
@@ -368,7 +369,7 @@ export class ProfileService {
     async createWorker(dto: CreateWorkerDto) {
         const user = await this.authService.createWorker({password: dto.password, phone: dto.phone})
         const profile = await this.profileRepository.save({user, ...dto})
-         await this.placeRepository.save({profile, city: {id: dto.cityId}, ...dto})
+        await this.placeRepository.save({profile, city: {id: dto.cityId}, ...dto})
     }
 
     async getWorkers() {
@@ -389,7 +390,7 @@ export class ProfileService {
         //name fisrtname secondname iin role
     }
     async getOneWorker(id:number){
-        return await this.profileRepository.findOne({where:{id},relations:["user","place"]})
+        return await this.profileRepository.findOne({where:{id},relations:["user","place",'place.region']})
     }
 
 

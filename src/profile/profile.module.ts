@@ -13,7 +13,6 @@ import { ReligionModule } from '../religion/religion.module';
 import { GenderModule } from '../gender/gender.module';
 import {NotificationModule} from "../notification/notification.module";
 import {AuthModule} from "../auth/auth.module";
-import {UserModule} from "../user/user.module";
 import {Place} from "./models/place.entity";
 
 @Module({

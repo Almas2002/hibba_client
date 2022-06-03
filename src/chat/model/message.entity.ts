@@ -23,9 +23,9 @@ export class Message {
   room: Room;
   @Column({default:false})
   read:boolean
-  @CreateDateColumn()
+  @CreateDateColumn({type:"timestamp"})
   createAt: Date;
-  @UpdateDateColumn()
+  @UpdateDateColumn({type:"timestamp"})
   updatedAt: Date;
 
   @OneToOne(()=>Notification,notification=>notification.message)
