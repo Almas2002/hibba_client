@@ -1,15 +1,16 @@
-import {HttpException, Injectable} from '@nestjs/common';
+import {forwardRef, HttpException, Inject, Injectable} from '@nestjs/common';
 import {User} from '../../user/user.entity';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Room} from '../model/room.entity';
 import {Repository} from 'typeorm';
 import {IPagination} from '../../profile/interfaces/get-profile-query.interface';
-import {ProfileService} from "../../profile/profile.service";
 import {SemiProfileService} from "./semi-profile.service";
+import {NotificationGatewayService} from "../../notification/service/notification-gateway.service";
+import {NotificationType} from "../../notification/notification.entity";
 
 @Injectable()
 export class RoomService {
-    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService) {
+    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService,@Inject(forwardRef(()=>NotificationGatewayService))private notification:NotificationGatewayService) {
     }
 
     async getRoomsForUser(userId: number, option?: IPagination) {
@@ -34,6 +35,7 @@ export class RoomService {
         if (!profile) {
             throw new HttpException("профиль не найден", 404)
         }
+        const creatorProfile = await this.profileService.getUserProfile(creator.id)
         let combination = creator.id + userId
         console.log(combination)
        // const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
@@ -46,10 +48,16 @@ export class RoomService {
         if (candidate){
             return candidate
         }
+
         const room = await this.roomRepository.save({combination});
         room.users = [creator, profile.user];
         const r = await this.roomRepository.save(room);
-        return  await this.roomRepository.findOne({where:{id:room.id}})
+        const r2 = await this.roomRepository.findOne({where:{id:room.id},relations:["users"]})
+        for (const user of r2.users){
+            if(creator.id !=user.id)
+            await this.notification.congratulationNotificationForOneUser(`вам хочет написать ${creatorProfile.firstName}`,user.id,NotificationType.ROOM)
+        }
+        return r2
     }
 
     async getRoom(id: number): Promise<Room> {

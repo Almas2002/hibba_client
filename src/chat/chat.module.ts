@@ -10,9 +10,10 @@ import { ProfileModule } from '../profile/profile.module';
 import {ChatController} from "./controller/chat.controller";
 import {Profile} from "../profile/models/profile.entity";
 import {SemiProfileService} from "./service/semi-profile.service";
+import {NotificationModule} from "../notification/notification.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([JoinedRoom, Message, Room,Profile])],
+  imports: [TypeOrmModule.forFeature([JoinedRoom, Message, Room,Profile]),forwardRef(()=>NotificationModule)],
   providers: [JoinedRoomService, MessageService, RoomService,SemiProfileService],
   exports:[JoinedRoomService,MessageService,RoomService],
   controllers:[ChatController],

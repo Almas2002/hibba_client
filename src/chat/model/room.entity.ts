@@ -4,12 +4,13 @@ import {
     CreateDateColumn, Entity,
     JoinTable,
     ManyToMany,
-    OneToMany,
+    OneToMany, OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import {JoinedRoom} from './joined-room.entity';
 import {Message} from './message.entity';
+import {Notification} from "../../notification/notification.entity";
 
 
 @Entity()
@@ -33,4 +34,7 @@ export class Room {
 
     @OneToMany(() => JoinedRoom, room => room.room)
     joinedUsers: JoinedRoom[];
+
+    @OneToOne(()=>Notification,notification=>notification.room)
+    notification:Notification
 }
