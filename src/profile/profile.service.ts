@@ -96,7 +96,7 @@ export class ProfileService {
         return await this.profileRepository.findOne({
             where: {user: {id: userId}},
             relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers', 'myLikes.likedProfile',
-                'likedUsers.profile', 'religion', 'photos', 'avatar', 'region','user'],
+                'likedUsers.profile', 'religion', 'photos', 'avatar', 'region', 'user'],
         });
     }
 
@@ -288,7 +288,11 @@ export class ProfileService {
     }
 
     private async getCountProfiles() {
-        return await this.profileRepository.createQueryBuilder("count").getCount()
+        return await this.profileRepository.createQueryBuilder("count")
+            .leftJoin("count.user","user")
+            .leftJoin("user.roles","roles")
+            .andWhere("roles.value <> :role",{role:"WORKER"})
+            .getCount()
     }
 
     async getStatisticCity(city?: string, another?: string[]) {
@@ -381,7 +385,7 @@ export class ProfileService {
             .leftJoin('profile.user', 'user')
             .addSelect('user.phone')
             .leftJoinAndSelect('user.roles', 'roles')
-            .andWhere('roles.value = :WORKER',{WORKER:"WORKER"})
+            .andWhere('roles.value = :WORKER', {WORKER: "WORKER"})
             .groupBy('profile.id')
             .addGroupBy('user.id')
             .addGroupBy('roles.id')
@@ -389,8 +393,9 @@ export class ProfileService {
         return await query.getMany()
         //name fisrtname secondname iin role
     }
-    async getOneWorker(id:number){
-        return await this.profileRepository.findOne({where:{id},relations:["user","place",'place.region']})
+
+    async getOneWorker(id: number) {
+        return await this.profileRepository.findOne({where:{id},relations:["place","user","place.city"]})
     }
 
 

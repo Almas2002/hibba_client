@@ -6,7 +6,7 @@ import {Profile} from "./profile.entity";
 export class Place{
     @PrimaryGeneratedColumn()
     id:number;
-    @ManyToOne(()=>Region,region=>region)
+    @ManyToOne(()=>Region,region=>region.places)
     city:Region
     @Column()
     street:string;
