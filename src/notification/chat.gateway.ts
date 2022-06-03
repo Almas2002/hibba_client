@@ -57,15 +57,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         let connectedUsers = null
         let notification = null
         for (const user of joinedUsers) {
-            if (user.user.id != u.user.id) {
-                connectedUsers = await this.connectedUserService.findByUserId(u.user.id)
-                notification = await this.notificationService.createMessageNotification(`у вас новое сообщение от :${user.user.profile.firstName}`, createMessage, u.user.id)
-                if (connectedUsers) {
-                    await this.sendToUser(u.socketId,notification)
-                }
-            } else {
+
                 await this.wss.to(user.socketId).emit('messageAdded', createMessage);
-            }
+
         }
     }
 
