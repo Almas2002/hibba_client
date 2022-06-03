@@ -37,7 +37,6 @@ export class RoomService {
         }
         const creatorProfile = await this.profileService.getUserProfile(creator.id)
         let combination = creator.id + userId
-        console.log(combination)
        // const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
         const query = this.roomRepository.createQueryBuilder("room")
             .leftJoinAndSelect("room.users","users")
@@ -55,7 +54,7 @@ export class RoomService {
         const r2 = await this.roomRepository.findOne({where:{id:room.id},relations:["users"]})
         for (const user of r2.users){
             if(creator.id !=user.id)
-            await this.notification.congratulationNotificationForOneUser(`вам хочет написать ${creatorProfile.firstName}`,user.id,NotificationType.ROOM)
+            await this.notification.congratulationNotificationForOneUser(`вам хочет написать ${creatorProfile?.firstName}`,user.id,NotificationType.ROOM)
         }
         return r2
     }
