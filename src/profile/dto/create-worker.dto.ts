@@ -14,7 +14,7 @@ export class CreateWorkerDto{
     @ApiProperty()
     iin:string
     @ApiProperty({example:"dd-mm-yyyy"})
-    date:Date
+    date:string
     @ApiProperty()
     cityId:number;
     @ApiProperty()
