@@ -108,7 +108,8 @@ export class ProfileService {
             .leftJoinAndSelect("likedUsers.userProfile", "userProfile")
             .leftJoinAndSelect("userProfile.avatar", "avatar")
             .andWhere("profile.id = :id", {id: profile.id})
-        return await query.getMany()
+        const data = await query.getOne()
+        return data.likedUsers
 
     }
 
