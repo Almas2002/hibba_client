@@ -210,34 +210,34 @@ export class ProfileService {
         if (userProfile?.id == candidateProfile.id) {
             throw new HttpException({message: 'вы не можете лайкнуть себя'}, HttpStatus.BAD_REQUEST);
         }
-        // let profile = await this.likeRepository.findOne({
-        //     where: {
-        //         likedProfile: {id: dto.profileId},
-        //         userProfile: {id:userProfile.id},
-        //     }
-        // });
-        //
-        //
-        // let candidate = await this.likeRepository.findOne({
-        //     where: {
-        //         likedProfile: {id:userProfile.id},
-        //         userProfile: {id: dto.profileId},
-        //     },
-        // });
-        //
-        // if (profile) {
-        //     await this.likeRepository.delete({id: profile.id})
-        //     return;
-        // }
-        // if (candidate) {
-        //     candidate.mutually = true;
-        //     await this.likeRepository.save(candidate);
-        //     return await this.likeRepository.save({
-        //         userProfile: {id:userProfile.id},
-        //         likedProfile: {id: dto.profileId},
-        //         mutually: true,
-        //     });
-        // }
+        let profile = await this.likeRepository.findOne({
+            where: {
+                likedProfile: {id: dto.profileId},
+                userProfile: {id:userProfile.id},
+            }
+        });
+
+
+        let candidate = await this.likeRepository.findOne({
+            where: {
+                likedProfile: {id:userProfile.id},
+                userProfile: {id: dto.profileId},
+            },
+        });
+
+        if (profile) {
+            await this.likeRepository.delete({id: profile.id})
+            return;
+        }
+        if (candidate) {
+            candidate.mutually = true;
+            await this.likeRepository.save(candidate);
+            return await this.likeRepository.save({
+                userProfile: {id:userProfile.id},
+                likedProfile: {id: dto.profileId},
+                mutually: true,
+            });
+        }
         const like = await this.likeRepository.save({userProfile, likedProfile: {id:candidateProfile?.id}});
         await this.notificationService.likeNotification(`Вас лайкнули ${candidateProfile?.firstName}!`, like, candidateProfile.user.id)
         return like
