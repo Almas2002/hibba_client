@@ -95,7 +95,7 @@ export class ProfileService {
     async getUserProfile(userId: number) {
         return await this.profileRepository.findOne({
             where: {user: {id: userId}},
-            relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers.likedProfile', 'myLikes.likedProfile',
+            relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers','likedUsers.likedProfile', 'myLikes.likedProfile',
                  'religion', 'photos', 'avatar', 'region', 'user'],
         });
     }
