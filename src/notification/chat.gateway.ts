@@ -10,7 +10,7 @@ import {OnModuleInit, UnauthorizedException} from '@nestjs/common';
 import {verify} from 'jsonwebtoken';
 
 import {ConnectedUserService} from '../socket/socket.service';
-import {Notification} from './notification.entity';
+import {Notification, NotificationType} from './notification.entity';
 import {IMessage} from './interface/interface';
 import {MessageService} from '../chat/service/message.service';
 import {RoomService} from '../chat/service/room.service';
@@ -52,16 +52,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
 
         const createMessage = await this.messageService.createMessage({...data, userId: socket.data.user.id});
+
         const u = room.joinedUsers.filter(u => u.user.id != socket.data.user)[0]
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
         let connectedUsers = null
         let notification = null
+        if (joinedUsers.some((j) => j.user.id != u.user.id)) {
+            await this.notificationService.createMessageNotification("у вас новое сообщение", createMessage, u.user.id)
+        }
         for (const user of joinedUsers) {
-
-                await this.wss.to(user.socketId).emit('messageAdded', createMessage);
-
+            await this.wss.to(user.socketId).emit('messageAdded', createMessage);
         }
     }
+
 
     @SubscribeMessage('join-room')
     async comeInChat(socket: Socket, data: number) {

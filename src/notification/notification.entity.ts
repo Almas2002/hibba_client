@@ -22,7 +22,7 @@ export class Notification {
   @Column({enum:NotificationType,default:NotificationType.NOTIFICATION})
   type:NotificationType
 
-  @OneToOne(()=>Like,like =>like,{cascade:true})
+  @OneToOne(()=>Like,like =>like,{onDelete:"CASCADE"})
   @JoinColumn()
   like?:Like
 

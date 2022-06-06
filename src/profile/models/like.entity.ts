@@ -10,10 +10,9 @@ export class Like extends BaseEntity {
   @Column({ default: false })
   mutually: boolean;
   @ManyToOne(() => Profile, profile => profile.myLikes)
-  profile: Profile;
+  userProfile: Profile;
   @ManyToOne(() => Profile, profile => profile.likedUsers)
   likedProfile: Profile;
-
-  @OneToOne(()=>Notification,notification=>notification.like)
+  @OneToOne(()=>Notification,notification=>notification.like,{onDelete:"CASCADE"})
   notification:Notification
 }

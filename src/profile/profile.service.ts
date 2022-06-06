@@ -199,46 +199,47 @@ export class ProfileService {
     }
 
     async likeProfile(dto: LikeProfileDto) {
-        let candidateProfile = await this.profileRepository.findOne({where: {id: dto.profileId}});
+        let candidateProfile = await this.profileRepository.findOne({where: {id: dto.profileId},relations:["user"]});
         if (!candidateProfile) {
             throw new HttpException({message: 'такого профиля нету'}, HttpStatus.BAD_REQUEST);
         }
         let userProfile = await this.profileRepository.findOne({where: {user: {id: dto.userId}}});
-        let profile = await this.likeRepository.findOne({
-            where: {
-                profile: {id: dto.profileId},
-                likedProfile: userProfile,
-            }
-        });
-        if (userProfile.id == candidateProfile.id) {
+        if (!userProfile){
+            throw new HttpException({message: 'вы полностью не зарегестрировались'}, HttpStatus.BAD_REQUEST);
+        }
+        if (userProfile?.id == candidateProfile.id) {
             throw new HttpException({message: 'вы не можете лайкнуть себя'}, HttpStatus.BAD_REQUEST);
         }
+        let profile = await this.likeRepository.findOne({
+            where: {
+                likedProfile: {id: dto.profileId},
+                userProfile: {id:userProfile.id},
+            }
+        });
+
 
         let candidate = await this.likeRepository.findOne({
             where: {
-                profile: userProfile,
-                likedProfile: {id: dto.profileId},
+                likedProfile: {id:userProfile.id},
+                userProfile: {id: dto.profileId},
             },
         });
 
-        if (candidate) {
-            await this.likeRepository.delete({id: candidate.id})
-            profile.mutually = !profile.mutually;
-            await this.likeRepository.save(profile);
+        if (profile) {
+            await this.likeRepository.delete({id: profile.id})
             return;
         }
-        if (profile) {
-            profile.mutually = true;
-            await this.likeRepository.save(profile);
+        if (candidate) {
+            candidate.mutually = true;
+            await this.likeRepository.save(candidate);
             return await this.likeRepository.save({
-                profile: userProfile,
+                userProfile: {id:userProfile.id},
                 likedProfile: {id: dto.profileId},
                 mutually: true,
             });
         }
-
-        const like = await this.likeRepository.save({profile: userProfile, likedProfile: {id: dto.profileId}});
-        await this.notificationService.likeNotification(`Вас лайкнули ${profile.profile.firstName}!`, like, dto.userId)
+        const like = await this.likeRepository.save({userProfile, likedProfile: candidateProfile});
+        await this.notificationService.likeNotification(`Вас лайкнули ${candidateProfile?.firstName}!`, like, candidateProfile.user.id)
         return like
     }
 

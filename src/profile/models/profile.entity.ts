@@ -58,7 +58,7 @@ export class Profile extends BaseEntity {
     @OneToMany(() => Like, like => like.likedProfile)
     likedUsers: Like[];
 
-    @OneToMany(() => Like, like => like.profile)
+    @OneToMany(() => Like, like => like.userProfile)
     myLikes: Like[];
 
     @Column({default: false})
