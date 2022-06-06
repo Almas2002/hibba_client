@@ -46,10 +46,8 @@ export class AuthService {
     }
 
     async createWorker(data: UserLoginDto) {
-        console.log(data.phone)
       const hashPassword = await bcrypt.hash(data.password, 5);
       const candidate = await this.userService.getUserByPhoneNumber(data.phone);
-        console.log(candidate)
       if (candidate) {
         throw new HttpException('такой пользователь уже существует', 400);
       }
