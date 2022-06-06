@@ -373,6 +373,7 @@ export class ProfileService {
 
     async createWorker(dto: CreateWorkerDto) {
         const date = new Date(dto.date)
+        console.log(date)
         const user = await this.authService.createWorker({password: dto.password, phone: dto.phone})
         const profile = await this.profileRepository.save({user,description:"",age:0,date, ...dto,})
         await this.placeRepository.save({profile, city: {id: dto.cityId}, ...dto})
