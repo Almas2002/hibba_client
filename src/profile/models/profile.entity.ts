@@ -79,7 +79,7 @@ export class Profile extends BaseEntity {
     @OneToOne(() => Place, place => place.profile)
     place: Place
 
-    @Column({type: "date",nullable:true})
+    @Column({type: "timestamp",nullable:true})
     date: Date
 
     @Column({nullable:true})
