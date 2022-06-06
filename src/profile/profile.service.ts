@@ -239,7 +239,7 @@ export class ProfileService {
             });
         }
         const like = await this.likeRepository.save({userProfile, likedProfile: {id:candidateProfile?.id}});
-        await this.notificationService.likeNotification(`Вас лайкнули ${candidateProfile?.firstName}!`, like, candidateProfile.user.id)
+        await this.notificationService.likeNotification(`Вас лайкнули ${userProfile?.firstName}!`, like, candidateProfile.user.id)
         return like
     }
 
