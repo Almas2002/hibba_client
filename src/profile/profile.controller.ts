@@ -77,6 +77,12 @@ export class ProfileController {
         return this.profileService.getProFiles(data);
     }
 
+    @UseGuards(AuthGuard)
+    @Get('get-likes')
+    getLikes(@UserDecorator('id')id: number) {
+        return this.profileService.getLikes(id)
+    }
+
     @ApiOperation({description: 'получить профилей'})
     @ApiBearerAuth()
     @UseGuards(AuthGuard)

@@ -93,11 +93,23 @@ export class ProfileService {
     }
 
     async getUserProfile(userId: number) {
+        //'myLikes', 'likedUsers','likedUsers.userProfile','userProfile.avatar','likedProfile.avatar'
         return await this.profileRepository.findOne({
             where: {user: {id: userId}},
-            relations: ['hobbies', 'category', 'gender', 'myLikes', 'likedUsers','likedUsers.userProfile', 'myLikes.likedProfile',
-                 'religion', 'photos', 'avatar', 'region', 'user','userProfile.avatar','likedProfile.avatar'],
+            relations: ['hobbies', 'category', 'gender', 'myLikes',
+                'religion', 'photos', 'avatar', 'region', 'user',],
         });
+    }
+
+    async getLikes(id: number) {
+        const profile = await this.profileRepository.findOne({where: {user: {id}}})
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoinAndSelect("profile.likedUsers", 'likedUsers')
+            .leftJoinAndSelect("likedUsers.userProfile", "userProfile")
+            .leftJoinAndSelect("userProfile.avatar", "avatar")
+            .andWhere("profile.id = :id", {id: profile.id})
+        return await query.getMany()
+
     }
 
     async getUserByProfileId(id: number) {
@@ -199,12 +211,12 @@ export class ProfileService {
     }
 
     async likeProfile(dto: LikeProfileDto) {
-        let candidateProfile = await this.profileRepository.findOne({where: {id: dto.profileId},relations:["user"]});
+        let candidateProfile = await this.profileRepository.findOne({where: {id: dto.profileId}, relations: ["user"]});
         if (!candidateProfile) {
             throw new HttpException({message: 'такого профиля нету'}, HttpStatus.BAD_REQUEST);
         }
         let userProfile = await this.profileRepository.findOne({where: {user: {id: dto.userId}}});
-        if (!userProfile){
+        if (!userProfile) {
             throw new HttpException({message: 'вы полностью не зарегестрировались'}, HttpStatus.BAD_REQUEST);
         }
         if (userProfile?.id == candidateProfile.id) {
@@ -213,14 +225,14 @@ export class ProfileService {
         let profile = await this.likeRepository.findOne({
             where: {
                 likedProfile: {id: dto.profileId},
-                userProfile: {id:userProfile.id},
+                userProfile: {id: userProfile.id},
             }
         });
 
 
         let candidate = await this.likeRepository.findOne({
             where: {
-                likedProfile: {id:userProfile.id},
+                likedProfile: {id: userProfile.id},
                 userProfile: {id: dto.profileId},
             },
         });
@@ -233,12 +245,12 @@ export class ProfileService {
             candidate.mutually = true;
             await this.likeRepository.save(candidate);
             return await this.likeRepository.save({
-                userProfile: {id:userProfile.id},
+                userProfile: {id: userProfile.id},
                 likedProfile: {id: dto.profileId},
                 mutually: true,
             });
         }
-        const like = await this.likeRepository.save({userProfile, likedProfile: {id:candidateProfile?.id}});
+        const like = await this.likeRepository.save({userProfile, likedProfile: {id: candidateProfile?.id}});
         await this.notificationService.likeNotification(`Вас лайкнули ${userProfile?.firstName}!`, like, candidateProfile.user.id)
         return like
     }
@@ -290,9 +302,9 @@ export class ProfileService {
 
     private async getCountProfiles() {
         return await this.profileRepository.createQueryBuilder("count")
-            .leftJoin("count.user","user")
-            .leftJoin("user.roles","roles")
-            .andWhere("roles.value <> :role",{role:"WORKER"})
+            .leftJoin("count.user", "user")
+            .leftJoin("user.roles", "roles")
+            .andWhere("roles.value <> :role", {role: "WORKER"})
             .getCount()
     }
 
@@ -372,10 +384,11 @@ export class ProfileService {
     }
 
     async createWorker(dto: CreateWorkerDto) {
+        console.log(dto)
         const date = new Date(dto.date)
         console.log(date)
         const user = await this.authService.createWorker({password: dto.password, phone: dto.phone})
-        const profile = await this.profileRepository.save({user,description:"",age:0,date, ...dto,})
+        const profile = await this.profileRepository.save({user, description: "", age: 0, date, ...dto,})
         await this.placeRepository.save({profile, city: {id: dto.cityId}, ...dto})
     }
 
@@ -398,7 +411,7 @@ export class ProfileService {
     }
 
     async getOneWorker(id: number) {
-        return await this.profileRepository.findOne({where:{id},relations:["place","user","place.city"]})
+        return await this.profileRepository.findOne({where: {id}, relations: ["place", "user", "place.city"]})
     }
 
 
