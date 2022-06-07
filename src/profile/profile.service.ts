@@ -57,7 +57,7 @@ export class ProfileService {
                 category: {id: data.categoryId},
                 religion: {id: data.religionId},
             });
-            await this.blockRepository.save({userProfile:profile})
+            await this.blockRepository.save({userProfile: profile})
             if (file?.length) {
                 for (const f of file) {
                     images.push(await this.fileService.createFile(f));
@@ -162,8 +162,9 @@ export class ProfileService {
             .leftJoinAndSelect('profile.region', 'region')
             .leftJoinAndSelect('profile.avatar', 'avatar')
             .leftJoinAndSelect('profile.photos', 'photos')
+            .leftJoin("profile.block", "block")
+            .andWhere("block.block  = :block", {block: true})
             .andWhere('profile.user_id <> :userId', {userId: data.userId})
-            .andWhere('profile.block = :block', {block: false})
             .andWhere('gender.id =:id', {id: profile.gender.id === 1 ? 2 : 1});
 
         if (data?.hobby && profile.hobbies.length) {
@@ -257,10 +258,10 @@ export class ProfileService {
     }
 
 
-    async blockUser(id: number,workerId:number,text:string) {
+    async blockUser(id: number, workerId: number, text: string) {
         const profile = await this.profileRepository.findOne({id});
-        const workerProfile = await this.profileRepository.findOne({where:{user:{id}}})
-        const block = await this.blockRepository.findOne({where:{userProfile:profile}})
+        const workerProfile = await this.profileRepository.findOne({where: {user: {id}}})
+        const block = await this.blockRepository.findOne({where: {userProfile: profile}})
         block.block = true
         block.text = text
         block.workerProfile = workerProfile
