@@ -273,7 +273,8 @@ export class ProfileService {
         const page = pagination?.page || 1;
         const offset = page * limit - limit;
         const query = this.profileRepository.createQueryBuilder('profile')
-            .andWhere('profile.block = :block', {block: true});
+            .leftJoin("profile.block","block")
+            .andWhere('block.block = :block', {block: true});
         query.limit(limit);
         query.offset(offset);
         return await query.getManyAndCount();
@@ -390,9 +391,7 @@ export class ProfileService {
     }
 
     async createWorker(dto: CreateWorkerDto) {
-        console.log(dto)
         const date = new Date(dto.date)
-        console.log(date)
         const user = await this.authService.createWorker({password: dto.password, phone: dto.phone})
         const profile = await this.profileRepository.save({user, description: "", age: 0, date, ...dto,})
         await this.placeRepository.save({profile, city: {id: dto.cityId}, ...dto})
@@ -429,6 +428,18 @@ export class ProfileService {
             .andWhere("block.block = :block", {block: false})
         return await query.getMany()
     }
+
+    async blockWorker(id: number, workerId: number, text: string) {
+        const profile = await this.profileRepository.findOne(id)
+        const block = await this.blockRepository.findOne({where: {userProfile: profile}})
+        if (block.block) {
+            throw new HttpException("этот пользователь уже заблокирован!", 400)
+        }
+        block.workerProfile = await this.profileRepository.findOne(workerId);
+        block.text = text
+        await this.blockRepository.save(block)
+    }
+
 
 
 }

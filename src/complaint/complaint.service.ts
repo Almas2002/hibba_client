@@ -1,6 +1,6 @@
-import {Injectable} from '@nestjs/common';
+import {HttpException, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {Complaint} from './complaint.entity';
+import {ComplainStatus, Complaint} from './complaint.entity';
 import {Repository} from 'typeorm';
 import {CreateComplaintDto} from './dto/create-complaint.dto';
 import {ProfileService} from '../profile/profile.service';
@@ -22,6 +22,15 @@ export class ComplaintService {
 
     async getComplaint(profileId: number) {
         return await this.complaintRepository.find({where: {culprit: {id: profileId}}, relations: ['reporter']});
+    }
+
+    async changeStatus(id: number, status: ComplainStatus) {
+        const complaint = await this.complaintRepository.findOne(id)
+        if (!complaint) {
+            throw new HttpException("жолаба не найден", 404)
+        }
+        complaint.status = status
+        await this.complaintRepository.save(complaint)
     }
 
     async getComplaints(pagination: IPagination) {
