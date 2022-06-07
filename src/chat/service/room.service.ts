@@ -51,7 +51,7 @@ export class RoomService {
         const room = await this.roomRepository.save({combination});
         room.users = [creator, profile.user];
         const r = await this.roomRepository.save(room);
-        const r2 = await this.roomRepository.findOne({where:{id:room.id},relations:["users"]})
+        const r2 = await this.roomRepository.findOne({where:{id:room.id},relations:["users","users.profile"]})
         for (const user of r2.users){
             if(creator.id !=user.id)
             await this.notification.congratulationNotificationForOneUser(`вам хочет написать ${creatorProfile?.firstName}`,user.id,NotificationType.ROOM)

@@ -13,7 +13,7 @@ export class SemiProfileService{
     async getUserProfile(userId: number) {
         return await this.profileRepository.findOne({
             where: {user: {id: userId}},
-            relations: ['hobbies', 'category', 'gender', 'myLikes', 'religion', 'photos', 'avatar', 'region'],
+            relations: ['hobbies', 'category', 'gender', 'religion', 'photos', 'avatar', 'region'],
         });
     }
 }
