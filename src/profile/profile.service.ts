@@ -162,8 +162,8 @@ export class ProfileService {
             .leftJoinAndSelect('profile.region', 'region')
             .leftJoinAndSelect('profile.avatar', 'avatar')
             .leftJoinAndSelect('profile.photos', 'photos')
-            .leftJoin("profile.block", "block")
-            .andWhere("block.block  = :block", {block: true})
+            // .leftJoin("profile.block", "block")
+            // .andWhere("block.block  = :block", {block: true})
             .andWhere('profile.user_id <> :userId', {userId: data.userId})
             .andWhere('gender.id =:id', {id: profile.gender.id === 1 ? 2 : 1});
 
@@ -418,6 +418,16 @@ export class ProfileService {
 
     async getOneWorker(id: number) {
         return await this.profileRepository.findOne({where: {id}, relations: ["place", "user", "place.city"]})
+    }
+
+    async getMyBlockProfiles(id: number) {
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoinAndSelect("profile.block", "block")
+            .leftJoinAndSelect("profile.avatar", "avatar")
+            .leftJoin("block.workerProfile", "workerProfile")
+            .andWhere("workerProfile.id = :id", {id})
+            .andWhere("block.block = :block", {block: false})
+        return await query.getMany()
     }
 
 

@@ -98,8 +98,8 @@ export class ProfileController {
     @Role(RoleEnums.WORKER)
     @UseGuards(RoleGuards)
     @Put('block-profile/:id')
-    blockProfile(@Param('id')profileId: number,@UserDecorator('id')id:number,@Body('text')text:string) {
-        return this.profileService.blockUser(profileId,id,text);
+    blockProfile(@Param('id')profileId: number, @UserDecorator('id')id: number, @Body('text')text: string) {
+        return this.profileService.blockUser(profileId, id, text);
     }
 
     @ApiOperation({description: 'получить блокированных пользователей'})
@@ -149,5 +149,12 @@ export class ProfileController {
     @Get('workers/:id')
     getOneWorker(@Param('id')id: number) {
         return this.profileService.getOneWorker(id)
+    }
+
+    @Role(RoleEnums.WORKER)
+    @UseGuards(RoleGuards)
+    @Get('my-blockProfiles')
+    blockProfiles(@UserDecorator('id')id: number) {
+        return this.profileService.getMyBlockProfiles(id)
     }
 }
