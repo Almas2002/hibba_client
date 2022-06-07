@@ -18,11 +18,10 @@ import {RegionService} from '../region/region.service';
 import {ReligionService} from '../religion/religion.service';
 import {GenderService} from '../gender/gender.service';
 import {NotificationGatewayService} from "../notification/service/notification-gateway.service";
-import {groupBy} from "rxjs";
-import {UserService} from "../user/user.service";
 import {AuthService} from "../auth/auth.service";
 import {CreateWorkerDto} from "./dto/create-worker.dto";
 import {Place} from "./models/place.entity";
+import {Block} from "./models/block.entity";
 
 @Injectable()
 export class ProfileService {
@@ -31,7 +30,8 @@ export class ProfileService {
         , private hobbyService: HobbyService, @InjectRepository(ProfilePhotos) private profilePhotosRepository: Repository<ProfilePhotos>,
                 private fileService: FileService, private categoryService: CategoryService, private regionService: RegionService,
                 private religionService: ReligionService, private genderService: GenderService, private notificationService: NotificationGatewayService
-        , private authService: AuthService, @InjectRepository(Place) private placeRepository: Repository<Place>) {
+        , private authService: AuthService, @InjectRepository(Place) private placeRepository: Repository<Place>,
+                @InjectRepository(Block) private blockRepository: Repository<Block>) {
     }
 
     async createProfile(data: CreateProfileDto, file: any[]) {
@@ -57,7 +57,7 @@ export class ProfileService {
                 category: {id: data.categoryId},
                 religion: {id: data.religionId},
             });
-
+            await this.blockRepository.save({userProfile:profile})
             if (file?.length) {
                 for (const f of file) {
                     images.push(await this.fileService.createFile(f));
@@ -257,10 +257,14 @@ export class ProfileService {
     }
 
 
-    async blockUser(id: number) {
+    async blockUser(id: number,workerId:number,text:string) {
         const profile = await this.profileRepository.findOne({id});
-        profile.block = !profile.block;
-        await this.profileRepository.save(profile);
+        const workerProfile = await this.profileRepository.findOne({where:{user:{id}}})
+        const block = await this.blockRepository.findOne({where:{userProfile:profile}})
+        block.block = true
+        block.text = text
+        block.workerProfile = workerProfile
+        await this.blockRepository.save(block)
     }
 
     async getBlockedUsers(pagination: IPagination) {

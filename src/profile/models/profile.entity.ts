@@ -18,6 +18,7 @@ import {ProfilePhotos} from '../profile-photos.entity';
 import {User} from '../../user/user.entity';
 import {Region} from '../../region/region.entity';
 import {Place} from "./place.entity";
+import {Block} from "./block.entity";
 
 
 @Entity()
@@ -27,9 +28,9 @@ export class Profile extends BaseEntity {
     @OneToOne(() => User, user => user)
     @JoinColumn({name: "user_id"})
     user: User;
-    @Column({default:""})
+    @Column({default: ""})
     description!: string
-    @Column({default:0})
+    @Column({default: 0})
     age!: number
     @Column()
     firstName: string;
@@ -45,9 +46,10 @@ export class Profile extends BaseEntity {
     @ManyToMany(() => Hobby, hobby => hobby.users)
     @JoinTable({name: 'profile_hobbies__hobby_profiles'})
     hobbies: Hobby[];
-
-    @Column({nullable:true})
-    middleName:string
+    @OneToOne(() => Block, block => block.userProfile)
+    block: Block
+    @Column({nullable: true})
+    middleName: string
     // мои репорты
     @OneToMany(() => Complaint, complaint => complaint.reporter)
     sendReports: Complaint[];
@@ -61,8 +63,6 @@ export class Profile extends BaseEntity {
     @OneToMany(() => Like, like => like.userProfile)
     myLikes: Like[];
 
-    @Column({default: false})
-    block: boolean;
 
     @Column({default: 0})
     kids: number
@@ -79,9 +79,12 @@ export class Profile extends BaseEntity {
     @OneToOne(() => Place, place => place.profile)
     place: Place
 
-    @Column({type: "timestamp",nullable:true})
+    @Column({type: "timestamp", nullable: true})
     date: Date
 
-    @Column({nullable:true})
-    iin:string
+    @Column({nullable: true})
+    iin: string
+
+    @OneToOne(() => Block, block => block.workerProfile)
+    myBlocks: Block[]
 }

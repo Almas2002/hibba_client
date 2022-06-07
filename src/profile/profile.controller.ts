@@ -25,6 +25,7 @@ import {RoleGuards} from "../auth/guard/role.guard";
 import {Role} from "../user/decorators/role.decorator";
 import {RoleEnums} from "../enums/role.enums";
 import {CreateWorkerDto} from "./dto/create-worker.dto";
+import {User} from "../user/user.entity";
 
 @ApiTags('profile')
 @Controller('profile')
@@ -94,10 +95,11 @@ export class ProfileController {
 
     @ApiOperation({description: 'блокировать профиль'})
     @ApiBearerAuth()
-    @UseGuards(AuthGuard)
+    @Role(RoleEnums.WORKER)
+    @UseGuards(RoleGuards)
     @Put('block-profile/:id')
-    blockProfile(@Param('id')profileId: number) {
-        return this.profileService.blockUser(profileId);
+    blockProfile(@Param('id')profileId: number,@UserDecorator('id')id:number,@Body('text')text:string) {
+        return this.profileService.blockUser(profileId,id,text);
     }
 
     @ApiOperation({description: 'получить блокированных пользователей'})

@@ -14,9 +14,10 @@ import { GenderModule } from '../gender/gender.module';
 import {NotificationModule} from "../notification/notification.module";
 import {AuthModule} from "../auth/auth.module";
 import {Place} from "./models/place.entity";
+import {Block} from "./models/block.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Profile,Like,ProfilePhotos,Place]),HobbyModule,
+  imports: [TypeOrmModule.forFeature([Profile,Like,ProfilePhotos,Place,Block]),HobbyModule,
     FileModule,CategoryModule,RegionModule,ReligionModule,GenderModule,forwardRef(()=>NotificationModule),AuthModule],
   providers:[ProfileService],
   controllers:[ProfileController],
