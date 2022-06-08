@@ -278,7 +278,7 @@ export class ProfileService {
         const offset = page * limit - limit;
         const query = this.profileRepository.createQueryBuilder('profile')
             .leftJoin("profile.block", "block")
-            .leftJoinAndSelect("block.workProfile","workProfile")
+            .leftJoinAndSelect("block.workerProfile","workerProfile")
             .andWhere('block.block = :block', {block: true});
         query.limit(limit);
         query.offset(offset);
