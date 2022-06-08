@@ -467,8 +467,9 @@ export class ProfileService {
         }
         query.limit(limit)
         query.offset(offset)
-
-        return await query.getManyAndCount()
+        const profiles = await query.getMany()
+        const count = await query.getCount()
+        return {profiles,count}
     }
 
     async updateWorker(id: number, dto: UpdateWorkerDto) {
