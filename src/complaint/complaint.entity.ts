@@ -6,7 +6,8 @@ import {Message} from "../chat/model/message.entity";
 export enum ComplainStatus {
     NEW = "NEW",
     MODERATION = "MODERATION",
-    COMPLETED = "COMPLETED"
+    COMPLETED = "COMPLETED",
+    REJECTED = "REJECTED"
 }
 
 @Entity()

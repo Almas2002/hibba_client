@@ -23,6 +23,7 @@ import {CreateWorkerDto} from "./dto/create-worker.dto";
 import {Place} from "./models/place.entity";
 import {Block} from "./models/block.entity";
 import {ProfileListDto} from "./dto/profile-list.dto";
+import {UpdateWorkerDto} from "./dto/update-worker.dto";
 
 @Injectable()
 export class ProfileService {
@@ -261,10 +262,10 @@ export class ProfileService {
 
     async blockUser(id: number, workerId: number, text: string) {
         const profile = await this.profileRepository.findOne({id});
-        const workerProfile = await this.profileRepository.findOne({where: {user: {id:workerId}}})
+        const workerProfile = await this.profileRepository.findOne({where: {user: {id: workerId}}})
         const block = await this.blockRepository.findOne({where: {userProfile: profile}})
-        if(block.block){
-            throw new HttpException("этот пользольватель уже заблокирован",400)
+        if (block.block) {
+            throw new HttpException("этот пользольватель уже заблокирован", 400)
         }
         block.block = true
         block.text = text
@@ -278,7 +279,7 @@ export class ProfileService {
         const offset = page * limit - limit;
         const query = this.profileRepository.createQueryBuilder('profile')
             .leftJoinAndSelect("profile.block", "block")
-            .leftJoinAndSelect("block.workerProfile","workerProfile")
+            .leftJoinAndSelect("block.workerProfile", "workerProfile")
             .andWhere('block.block = :block', {block: true});
         query.limit(limit);
         query.offset(offset);
@@ -399,7 +400,7 @@ export class ProfileService {
         const date = new Date(dto.date)
         const user = await this.authService.createWorker({password: dto.password, phone: dto.phone})
         const profile = await this.profileRepository.save({user, description: "", age: 0, date, ...dto,})
-        await this.blockRepository.save({userProfile:profile})
+        await this.blockRepository.save({userProfile: profile})
         await this.placeRepository.save({profile, city: {id: dto.cityId}, ...dto})
     }
 
@@ -426,12 +427,12 @@ export class ProfileService {
     }
 
     async getMyBlockProfiles(id: number) {
-        const profile = await this.profileRepository.findOne({where:{user:{id}}})
+        const profile = await this.profileRepository.findOne({where: {user: {id}}})
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoinAndSelect("profile.block", "block")
             .leftJoinAndSelect("profile.avatar", "avatar")
             .leftJoin("block.workerProfile", "workerProfile")
-            .andWhere("workerProfile.id = :id", {id:profile.id})
+            .andWhere("workerProfile.id = :id", {id: profile.id})
             .andWhere("block.block = :block", {block: true})
         return await query.getMany()
     }
@@ -442,7 +443,7 @@ export class ProfileService {
         if (block.block) {
             throw new HttpException("этот пользователь уже заблокирован!", 400)
         }
-        block.workerProfile = await this.profileRepository.findOne({where:{user:{id:workerId}}});
+        block.workerProfile = await this.profileRepository.findOne({where: {user: {id: workerId}}});
         block.text = text
         block.block = true
         await this.blockRepository.save(block)
@@ -468,6 +469,23 @@ export class ProfileService {
         query.offset(offset)
 
         return await query.getManyAndCount()
+    }
+
+    async updateWorker(id: number, dto: UpdateWorkerDto) {
+        const profile = await this.profileRepository.findOne({user: {id}})
+        profile.firstName = dto.firstName
+        profile.secondName = dto.secondName
+        profile.middleName = dto.middleName
+        const place = await this.placeRepository.findOne({where: {profile}})
+        place.apartment = dto.apartment;
+        place.floor = dto.floor
+        place.index = dto.index
+        place.building = dto.building
+        if (dto.cityId) {
+            place.city = await this.regionService.findOne(dto.cityId)
+        }
+        await this.profileRepository.save(profile)
+        await this.placeRepository.save(place)
     }
 
 
