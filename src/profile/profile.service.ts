@@ -23,7 +23,6 @@ import {CreateWorkerDto} from "./dto/create-worker.dto";
 import {Place} from "./models/place.entity";
 import {Block} from "./models/block.entity";
 import {ProfileListDto} from "./dto/profile-list.dto";
-import {of} from "rxjs";
 
 @Injectable()
 export class ProfileService {
@@ -262,10 +261,10 @@ export class ProfileService {
 
     async blockUser(id: number, workerId: number, text: string) {
         const profile = await this.profileRepository.findOne({id});
-        const workerProfile = await this.profileRepository.findOne({where: {user: {id}}})
+        const workerProfile = await this.profileRepository.findOne({where: {user: {id:workerId}}})
         const block = await this.blockRepository.findOne({where: {userProfile: profile}})
         if(block.block){
-            throw new HttpException("вы уже лайкнули",400)
+            throw new HttpException("этот пользольватель уже заблокирован",400)
         }
         block.block = true
         block.text = text
@@ -436,13 +435,14 @@ export class ProfileService {
     }
 
     async blockWorker(id: number, workerId: number, text: string) {
-        const profile = await this.profileRepository.findOne(id)
+        const profile = await this.profileRepository.findOne({id})
         const block = await this.blockRepository.findOne({where: {userProfile: profile}})
         if (block.block) {
             throw new HttpException("этот пользователь уже заблокирован!", 400)
         }
-        block.workerProfile = await this.profileRepository.findOne(workerId);
+        block.workerProfile = await this.profileRepository.findOne({where:{user:{id:workerId}}});
         block.text = text
+        block.block = true
         await this.blockRepository.save(block)
     }
 
