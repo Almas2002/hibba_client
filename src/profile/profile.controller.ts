@@ -143,6 +143,7 @@ export class ProfileController {
 
     @Get('workers')
     getWorkers() {
+        return this.profileService.getWorkers()
     }
     @Get('workers/:id')
     getOneWorker(@Param('id')id: number) {
