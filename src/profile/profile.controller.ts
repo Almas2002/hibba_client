@@ -25,7 +25,7 @@ import {RoleGuards} from "../auth/guard/role.guard";
 import {Role} from "../user/decorators/role.decorator";
 import {RoleEnums} from "../enums/role.enums";
 import {CreateWorkerDto} from "./dto/create-worker.dto";
-import {User} from "../user/user.entity";
+import {ProfileListDto} from "./dto/profile-list.dto";
 
 @ApiTags('profile')
 @Controller('profile')
@@ -95,7 +95,7 @@ export class ProfileController {
 
     @ApiOperation({description: 'блокировать профиль'})
     @ApiBearerAuth()
-    @Role(RoleEnums.WORKER)
+    @Role(RoleEnums.WORKER,RoleEnums.SUPER_ADMIN)
     @UseGuards(RoleGuards)
     @Put('block-profile/:id')
     blockProfile(@Param('id')profileId: number, @UserDecorator('id')id: number, @Body('text')text: string) {
@@ -143,18 +143,33 @@ export class ProfileController {
 
     @Get('workers')
     getWorkers() {
-        return this.profileService.getWorkers()
     }
-
     @Get('workers/:id')
     getOneWorker(@Param('id')id: number) {
         return this.profileService.getOneWorker(id)
     }
+    @Role(RoleEnums.SUPER_ADMIN)
+    @UseGuards(RoleGuards)
+    @Put('block-worker/:id')
+    blockWorker(@Param('id')id:number,@Body('text')text:string,@UserDecorator('id')workerId:number){
+        return this.profileService.blockWorker(id,workerId,text)
+    }
 
-    @Role(RoleEnums.WORKER)
+    @Role(RoleEnums.WORKER,RoleEnums.SUPER_ADMIN)
     @UseGuards(RoleGuards)
     @Get('my-blockProfiles')
     blockProfiles(@UserDecorator('id')id: number) {
         return this.profileService.getMyBlockProfiles(id)
     }
+    @ApiQuery({name: 'limit', type: 'int', required: false})
+    @ApiQuery({name: 'page', type: 'int', required: false})
+    @ApiQuery({name: 'firstName', type: 'sting', required: false})
+    @ApiQuery({name: 'secondName', type: 'string', required: false})
+    @ApiQuery({name: 'phone', type: 'sting', required: false})
+    @ApiOperation({summary:"лист листов админ"})
+    @Get('/list')
+    listProfile(@Query()dto:ProfileListDto){
+        return this.profileService.profileListAdmin(dto)
+    }
+
 }

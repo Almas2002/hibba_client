@@ -22,6 +22,8 @@ import {AuthService} from "../auth/auth.service";
 import {CreateWorkerDto} from "./dto/create-worker.dto";
 import {Place} from "./models/place.entity";
 import {Block} from "./models/block.entity";
+import {ProfileListDto} from "./dto/profile-list.dto";
+import {of} from "rxjs";
 
 @Injectable()
 export class ProfileService {
@@ -262,6 +264,9 @@ export class ProfileService {
         const profile = await this.profileRepository.findOne({id});
         const workerProfile = await this.profileRepository.findOne({where: {user: {id}}})
         const block = await this.blockRepository.findOne({where: {userProfile: profile}})
+        if(block.block){
+            throw new HttpException("вы уже лайкнули",400)
+        }
         block.block = true
         block.text = text
         block.workerProfile = workerProfile
@@ -273,7 +278,7 @@ export class ProfileService {
         const page = pagination?.page || 1;
         const offset = page * limit - limit;
         const query = this.profileRepository.createQueryBuilder('profile')
-            .leftJoin("profile.block","block")
+            .leftJoin("profile.block", "block")
             .andWhere('block.block = :block', {block: true});
         query.limit(limit);
         query.offset(offset);
@@ -425,7 +430,7 @@ export class ProfileService {
             .leftJoinAndSelect("profile.avatar", "avatar")
             .leftJoin("block.workerProfile", "workerProfile")
             .andWhere("workerProfile.id = :id", {id})
-            .andWhere("block.block = :block", {block: false})
+            .andWhere("block.block = :block", {block: true})
         return await query.getMany()
     }
 
@@ -440,6 +445,27 @@ export class ProfileService {
         await this.blockRepository.save(block)
     }
 
+    async profileListAdmin(dto: ProfileListDto) {
+        const limit = dto?.limit || 10
+        const page = dto?.page || 1
+        const offset = page * limit - limit
+        const query = this.profileRepository.createQueryBuilder("profile")
+            .leftJoinAndSelect("profile.block", "block")
+            .leftJoinAndSelect("profile.user", "user")
+        if (dto?.firstName) {
+            query.andWhere("profile.firstName LIKE :firstName", {firstName: `%${dto.firstName}%`})
+        }
+        if (dto?.secondName) {
+            query.andWhere("profile.secondName LIKE :secondName", {secondName: `%${dto.secondName}%`})
+        }
+        if (dto?.phone) {
+            query.andWhere("user.phone LIKE :phone", {phone: `%${dto.phone}%`})
+        }
+        query.limit(limit)
+        query.offset(offset)
+
+        return await query.getManyAndCount()
+    }
 
 
 }

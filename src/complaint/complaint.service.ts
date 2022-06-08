@@ -30,7 +30,7 @@ export class ComplaintService {
             throw new HttpException("жолаба не найден", 404)
         }
         complaint.status = status
-        await this.complaintRepository.save(complaint)
+        return  await this.complaintRepository.save(complaint)
     }
 
     async getComplaints(pagination: IPagination) {

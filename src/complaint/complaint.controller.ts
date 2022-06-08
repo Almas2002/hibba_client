@@ -10,6 +10,7 @@ import {Role} from "../user/decorators/role.decorator";
 import {RoleEnums} from "../enums/role.enums";
 import {ComplainStatus} from "./complaint.entity";
 import {createEvalAwarePartialHost} from "ts-node/dist/repl";
+import {UpdateComplaintStatusDto} from "./dto/updateComplaintStatus.dto";
 
 @ApiTags('complaint')
 @Controller('complaint')
@@ -42,8 +43,8 @@ export class ComplaintController {
     @Role(RoleEnums.WORKER, RoleEnums.SUPER_ADMIN)
     @UseGuards(RoleGuards)
     @Put('/:id')
-    changeStatus(@Param('id')id: number, @Body('status')status: ComplainStatus) {
-        return this.complaintService.changeStatus(id, status)
+    changeStatus(@Param('id')id: number, @Body()status: UpdateComplaintStatusDto) {
+        return this.complaintService.changeStatus(id, status.status)
     }
 
 
