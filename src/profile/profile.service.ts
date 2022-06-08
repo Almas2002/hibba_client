@@ -278,6 +278,7 @@ export class ProfileService {
         const offset = page * limit - limit;
         const query = this.profileRepository.createQueryBuilder('profile')
             .leftJoin("profile.block", "block")
+            .leftJoinAndSelect("block.workProfile","workProfile")
             .andWhere('block.block = :block', {block: true});
         query.limit(limit);
         query.offset(offset);
@@ -425,11 +426,12 @@ export class ProfileService {
     }
 
     async getMyBlockProfiles(id: number) {
+        const profile = await this.profileRepository.findOne({where:{user:{id}}})
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoinAndSelect("profile.block", "block")
             .leftJoinAndSelect("profile.avatar", "avatar")
             .leftJoin("block.workerProfile", "workerProfile")
-            .andWhere("workerProfile.id = :id", {id})
+            .andWhere("workerProfile.id = :id", {id:profile.id})
             .andWhere("block.block = :block", {block: true})
         return await query.getMany()
     }
