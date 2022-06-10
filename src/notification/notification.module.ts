@@ -11,7 +11,7 @@ import { ChatModule } from '../chat/chat.module';
 @Module({
   imports: [TypeOrmModule.forFeature([Notification]), SocketModule,forwardRef(()=>ChatModule)],
   controllers: [NotificationController],
-  providers: [NotificationService, ChatGateway, NotificationGatewayService],
+  providers: [NotificationService,NotificationGatewayService, ChatGateway ],
   exports: [NotificationGatewayService],
 })
 export class NotificationModule {

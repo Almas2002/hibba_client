@@ -6,7 +6,7 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets';
 import {Server, Socket} from 'socket.io';
-import {OnModuleInit, UnauthorizedException} from '@nestjs/common';
+import {forwardRef, Inject, OnModuleInit, UnauthorizedException} from '@nestjs/common';
 import {verify} from 'jsonwebtoken';
 
 import {ConnectedUserService} from '../socket/socket.service';
@@ -21,7 +21,7 @@ import {NotificationGatewayService} from "./service/notification-gateway.service
 @WebSocketGateway({namespace: '/', cors: {origin: "*", credentials: true, methods: ["GET", "POST"],}})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
     constructor(private connectedUserService: ConnectedUserService,
-                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService, private notificationService: NotificationGatewayService) {
+                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService,@Inject(forwardRef(()=>NotificationGatewayService))private notificationService: NotificationGatewayService) {
     }
 
     @WebSocketServer() wss: Server;
