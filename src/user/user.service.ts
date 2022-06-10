@@ -5,10 +5,13 @@ import {Repository} from 'typeorm';
 import {UserLoginDto} from '../auth/dto/user-login.dto';
 import {RoleService} from '../role/role.service';
 import {AddRoleDto} from './dto/add-role.dto';
+import {UserVisit} from "./user-visit.entity";
+import {UserStatisticDto} from "./dto/user-statistic.dto";
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) private userRepository: Repository<User>, private roleService: RoleService) {
+    constructor(@InjectRepository(User) private userRepository: Repository<User>,
+                private roleService: RoleService, @InjectRepository(UserVisit) private userVisitRepository: Repository<UserVisit>) {
     }
 
 
@@ -36,6 +39,16 @@ export class UserService {
         return user;
     }
 
+    async visit(id: number) {
+        let visit = await this.userVisitRepository.findOne({where: {user: {id}, date: new Date()}})
+        if (!visit) {
+            visit = await this.userVisitRepository.save({user: {id}, date: new Date()})
+        }
+        visit.amount = visit.amount + 1
+        await this.userVisitRepository.save(visit)
+    }
+
+
     async deleteRoleFromUser(dto: AddRoleDto) {
         const {role, user} = await this.workWithRole(dto);
         const roles = user.roles.filter(e => e.value !== role.value);
@@ -59,7 +72,7 @@ export class UserService {
     }
 
     async findUserById(id: number) {
-        return await this.userRepository.findOne({id}, {relations: ["roles","profile"]})
+        return await this.userRepository.findOne({id}, {relations: ["roles", "profile"]})
     }
 
     async getAllAdmins(role: string = 'ADMIN') {
@@ -67,6 +80,15 @@ export class UserService {
             .leftJoinAndSelect('user.roles', 'roles')
             .andWhere('roles.value = :role', {role})
         return await query.getMany()
+    }
+
+    async getStatistic(dto: UserStatisticDto) {
+        console.log("a")
+        const query = this.userVisitRepository.createQueryBuilder("visit")
+            .select("SUM(visit.amount) ", "amount")
+            .andWhere("visit.date >= :dateFrom AND visit.date <= :dateTo", {dateFrom: dto.dateFrom, dateTo: dto.dateTo})
+        const a = await query.getRawOne()
+        return a.amount
     }
 
 

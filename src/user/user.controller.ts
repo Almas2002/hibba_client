@@ -1,7 +1,9 @@
-import {Controller, Get, Param} from '@nestjs/common';
+import {Body, Controller, Get, Param} from '@nestjs/common';
 import { UserService } from './user.service';
 import { MessagePattern } from '@nestjs/microservices';
 import {ApiOperation} from "@nestjs/swagger";
+import {UpdateWorkerDto} from "../profile/dto/update-worker.dto";
+import {UserStatisticDto} from "./dto/user-statistic.dto";
 
 @Controller('user')
 export class UserController {
@@ -11,6 +13,13 @@ export class UserController {
   getOne(id:number){
     return this.userService.findUserById(id)
   }
+  @ApiOperation({summary:"статистика"})
+  @Get('statistic')
+  statistic(@Body()dto:UserStatisticDto){
+    console.log(dto)
+    return this.userService.getStatistic(dto)
+  }
+
   @ApiOperation({ description: 'получить админов(админ)'})
   @Get('get-admins')
   getAdmins(){
@@ -21,5 +30,8 @@ export class UserController {
   getUserById(@Param("id")id:number){
      return this.userService.findUserById(id)
   }
+
+
+
 
 }

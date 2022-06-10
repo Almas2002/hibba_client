@@ -96,6 +96,7 @@ export class AuthService {
             throw new UnauthorizedException({message: 'вы не загерестрированы'});
         }
         const user = await this.userService.findUserById(verifyToken.id);
+        await this.userService.visit(user.id)
         const tokens = this.generationToken(user);
         await this.saveToken(user, tokens.refresh_token);
         //res.cookie('refreshToken', tokens.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})

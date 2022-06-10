@@ -7,11 +7,12 @@ import { FileModule } from '../file/file.module';
 import { RoleModule } from '../role/role.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
+import {UserVisit} from "./user-visit.entity";
 
 require('dotenv').config()
 @Module({
   controllers:[UserController],
-  imports:[forwardRef(()=>AuthModule),FileModule,TypeOrmModule.forFeature([User]),RoleModule],
+  imports:[forwardRef(()=>AuthModule),FileModule,TypeOrmModule.forFeature([User,UserVisit]),RoleModule],
   providers:[UserService],
   exports:[UserService]
 })
