@@ -184,4 +184,10 @@ export class ProfileController {
         return this.profileService.updateWorker(id, dto)
     }
 
+    @Get('user/:id')
+    getOneUser(@Param('id')id: number) {
+        return this.profileService.getOneUser(id)
+    }
+
+
 }

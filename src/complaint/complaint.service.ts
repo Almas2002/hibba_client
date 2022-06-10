@@ -17,7 +17,8 @@ export class ComplaintService {
         if (complaints.length >= 5) {
             return {message: 'вы не можете написать жалобу больше 5ти раз за день', status: 400};
         }
-        await this.complaintRepository.save({culprit: {id: dto.profileId}, text: dto.text, reporter: profile});
+
+        await this.complaintRepository.save({culprit: {id: dto.profileId}, text: dto.text, reporter: profile,message:{id:dto.messageId ? dto.messageId : null}});
     }
 
     async getComplaint(profileId: number) {
@@ -40,6 +41,7 @@ export class ComplaintService {
         const query = await this.complaintRepository.createQueryBuilder('complaint')
             .leftJoinAndSelect('complaint.reporter', 'reporter')
             .leftJoinAndSelect('complaint.culprit', 'culprit')
+            .leftJoinAndSelect("complaint.message","message")
             .groupBy("complaint.id")
             .addGroupBy('reporter.createdAt')
             .addGroupBy('reporter.updateAt')
@@ -47,6 +49,7 @@ export class ComplaintService {
             .addGroupBy('culprit.createdAt')
             .addGroupBy('culprit.updateAt')
             .addGroupBy('culprit.id')
+            .addGroupBy('message.id')
             .orderBy('complaint.createdAt', 'DESC')
         query.limit(limit)
         query.offset(offset)

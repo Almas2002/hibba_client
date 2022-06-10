@@ -10,6 +10,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import {Notification} from "../../notification/notification.entity";
+import {Complaint} from "../../complaint/complaint.entity";
 
 @Entity()
 export class Message {
@@ -30,4 +31,8 @@ export class Message {
 
   @OneToOne(()=>Notification,notification=>notification.message)
   notifications:Notification
+
+  @OneToOne(()=>Complaint,complaint=>complaint.message)
+  complaint:Complaint
+
 }

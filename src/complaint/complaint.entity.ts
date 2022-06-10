@@ -26,7 +26,7 @@ export class Complaint extends BaseEntity {
     @Column({enum: ComplainStatus, default: ComplainStatus.NEW})
     status: ComplainStatus
 
-    @OneToOne(() => Message, message => message)
+    @OneToOne(() => Message, message => message.complaint)
     @JoinColumn()
     message: Message
 }

@@ -286,6 +286,14 @@ export class ProfileService {
         return await query.getManyAndCount();
     }
 
+    async getOneUser(id: number) {
+        return await this.profileRepository.findOne({
+            where: {id},
+            relations: ["block", "block.workerProfile", "region", "category", "hobbies", "gender",
+                "complaints", "sendReports", "complaints.reporter", "sendReports.culprit","complaints.message","sendReports.message"]
+        })
+    }
+
     async updateAvatar(userId: number, photoId: number) {
         const profile = await this.profileRepository.findOne({where: {user: {id: userId}}});
         const photo = await this.profilePhotosRepository.findOne({where: {id: photoId}, relations: ["profile"]});
@@ -423,7 +431,10 @@ export class ProfileService {
     }
 
     async getOneWorker(id: number) {
-        return await this.profileRepository.findOne({where: {id}, relations: ["place", "user", "place.city"]})
+        return await this.profileRepository.findOne({
+            where: {id},
+            relations: ["place", "user", "place.city", "block", "block.workerProfile"]
+        })
     }
 
     async getMyBlockProfiles(id: number) {
@@ -469,7 +480,7 @@ export class ProfileService {
         query.offset(offset)
         const profiles = await query.getMany()
         const count = await query.getCount()
-        return {profiles,count}
+        return {profiles, count}
     }
 
     async updateWorker(id: number, dto: UpdateWorkerDto) {

@@ -6,4 +6,6 @@ export class CreateComplaintDto {
   profileId:number
   @ApiProperty({example:"он кинул мне фотку члена",description:"описание жалобы"})
   text:string
+  @ApiProperty({example:"идентификатор сообщение",description:"доказательсво на жалобу"})
+  messageId:number
 }
