@@ -16,12 +16,12 @@ import {MessageService} from '../chat/service/message.service';
 import {RoomService} from '../chat/service/room.service';
 import {JoinedRoomService} from '../chat/service/joined-room.service';
 import {TypingDto} from "./dto/typing.dto";
-import {NotificationService} from "./service/notification.service";
+import {NotificationGatewayService} from "./service/notification-gateway.service";
 
 @WebSocketGateway({namespace: '/', cors: {origin: "*", credentials: true, methods: ["GET", "POST"],}})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
     constructor(private connectedUserService: ConnectedUserService,
-                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService, private notificationService: NotificationService) {
+                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService, private notificationService: NotificationGatewayService) {
     }
 
     @WebSocketServer() wss: Server;
@@ -59,7 +59,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         let notification = null
         if (joinedUsers.some((j) => j.user.id != u.id)) {
             console.log("offline")
-            await this.notificationService.createMessageNotification("у вас новое сообщение", createMessage, u.id)
+            await this.notificationService.messageNotification("у вас новое сообщение",createMessage,u.id)
         }
         for (const user of joinedUsers) {
             await this.wss.to(user.socketId).emit('messageAdded', createMessage);

@@ -4,6 +4,7 @@ import {ChatGateway} from '../chat.gateway';
 import {ConnectedUserService} from '../../socket/socket.service';
 import {Like} from "../../profile/models/like.entity";
 import {NotificationType} from "../notification.entity";
+import {Message} from "../../chat/model/message.entity";
 
 @Injectable()
 export class NotificationGatewayService {
@@ -31,6 +32,16 @@ export class NotificationGatewayService {
   }
   async likeNotification(message:string,like:Like,userId:number){
     const notification = await this.notificationService.createLikeNotification(message,userId,like)
+    const users = await this.connectedUserService.findAllUser();
+    for (const user of users) {
+      if (user.user.id == userId) {
+        this.notificationGateway.sendToUser(user.socketId, notification);
+      }
+    }
+  }
+
+  async messageNotification(message:string,message1:Message,userId:number){
+    const notification = await this.notificationService.createMessageNotification(message,message1,userId)
     const users = await this.connectedUserService.findAllUser();
     for (const user of users) {
       if (user.user.id == userId) {
