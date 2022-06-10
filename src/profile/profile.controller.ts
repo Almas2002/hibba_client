@@ -166,6 +166,13 @@ export class ProfileController {
         return this.profileService.getMyBlockProfiles(id)
     }
 
+    @Role(RoleEnums.WORKER, RoleEnums.SUPER_ADMIN)
+    @UseGuards(RoleGuards)
+    @Get('my-blockProfiles/:id')
+    blockProfilesId(@Param('id')id:number) {
+        return this.profileService.getMyBlockProfiles(id)
+    }
+
     @ApiQuery({name: 'limit', type: 'int', required: false})
     @ApiQuery({name: 'page', type: 'int', required: false})
     @ApiQuery({name: 'firstName', type: 'sting', required: false})
