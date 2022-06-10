@@ -55,14 +55,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
         const u = room.users.filter(u => u.id != socket.data.user)[0]
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
-        let connectedUsers = null
-        let notification = null
-        if (joinedUsers.some((j) => j.user.id != u.id)) {
-            console.log("offline")
-            await this.notificationService.messageNotification("у вас новое сообщение",createMessage,u.id)
-        }
+        const b = joinedUsers.filter((us)=>us.user.id === u.id)
+
         for (const user of joinedUsers) {
             await this.wss.to(user.socketId).emit('messageAdded', createMessage);
+        }
+        if(!b.length){
+            await this.notificationService.messageNotification("у вас новое сообщение",createMessage,u.id)
         }
     }
 
