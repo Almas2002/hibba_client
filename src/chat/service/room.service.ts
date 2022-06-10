@@ -10,7 +10,7 @@ import {NotificationType} from "../../notification/notification.entity";
 
 @Injectable()
 export class RoomService {
-    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService,@Inject(forwardRef(()=>NotificationGatewayService))private notification:NotificationGatewayService) {
+    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService, @Inject(forwardRef(() => NotificationGatewayService)) private notification: NotificationGatewayService) {
     }
 
     async getRoomsForUser(userId: number, option?: IPagination) {
@@ -23,7 +23,7 @@ export class RoomService {
             .where('users.id = :userId', {userId})
             .leftJoinAndSelect('room.users', 'all_users')
             .leftJoinAndSelect("all_users.profile", "profile")
-            .leftJoinAndSelect("profile.avatar",'avatar')
+            .leftJoinAndSelect("profile.avatar", 'avatar')
             .orderBy('room.updatedAt', 'DESC')
             .limit(limit)
             .offset(offset);
@@ -37,29 +37,29 @@ export class RoomService {
         }
         const creatorProfile = await this.profileService.getUserProfile(creator.id)
         let combination = creator.id + userId
-       // const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
+        // const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
         const query = this.roomRepository.createQueryBuilder("room")
-            .leftJoinAndSelect("room.users","users")
-            .leftJoinAndSelect("users.profile","profile")
-            .leftJoinAndSelect("profile.avatar","avatar")
-            .where("room.combination = :combination",{combination})
-        const candidate  = await query.getOne()
-        if (candidate){
+            .leftJoinAndSelect("room.users", "users")
+            .leftJoinAndSelect("users.profile", "profile")
+            .leftJoinAndSelect("profile.avatar", "avatar")
+            .where("room.combination = :combination", {combination})
+        const candidate = await query.getOne()
+        if (candidate) {
             return candidate
         }
 
         const room = await this.roomRepository.save({combination});
         room.users = [creator, profile.user];
-        const r = await this.roomRepository.save(room);
-        const r2 = await this.roomRepository.findOne({where:{id:room.id},relations:["users","users.profile"]})
-        for (const user of r2.users){
-            if(creator.id !=user.id)
-            await this.notification.congratulationNotificationForOneUser(`вам хочет написать ${creatorProfile?.firstName}`,user.id,NotificationType.ROOM)
+        await this.roomRepository.save(room);
+        const r2 = await this.roomRepository.findOne({where: {id: room.id}, relations: ["users", "users.profile"]})
+        for (const user of r2.users) {
+            if (creator.id != user.id)
+                await this.notification.roomNotification(`вам хочет написать ${creatorProfile?.firstName}`,room,profile.user.id)
         }
         return r2
     }
 
     async getRoom(id: number): Promise<Room> {
-        return await this.roomRepository.findOne({id}, {relations: ["joinedUsers", "joinedUsers.user","users"]});
+        return await this.roomRepository.findOne({id}, {relations: ["joinedUsers", "joinedUsers.user", "users"]});
     }
 }

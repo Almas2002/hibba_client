@@ -4,6 +4,7 @@ import {Notification, NotificationType} from '../notification.entity';
 import {Repository} from 'typeorm';
 import {Like} from "../../profile/models/like.entity";
 import {Message} from "../../chat/model/message.entity";
+import {Room} from "../../chat/model/room.entity";
 
 @Injectable()
 export class NotificationService {
@@ -25,5 +26,8 @@ export class NotificationService {
 
     async createMessageNotification(text: string, message: Message, id: number) {
         return await this.notificationRepository.save({text, user: {id}, message, type: NotificationType.MESSAGE})
+    }
+    async createRoomNotification(text: string, room: Room, id: number){
+        return await this.notificationRepository.save({text, user: {id}, room, type: NotificationType.ROOM})
     }
 }

@@ -5,6 +5,7 @@ import {ConnectedUserService} from '../../socket/socket.service';
 import {Like} from "../../profile/models/like.entity";
 import {NotificationType} from "../notification.entity";
 import {Message} from "../../chat/model/message.entity";
+import {Room} from "../../chat/model/room.entity";
 
 @Injectable()
 export class NotificationGatewayService {
@@ -42,6 +43,15 @@ export class NotificationGatewayService {
 
   async messageNotification(message:string,message1:Message,userId:number){
     const notification = await this.notificationService.createMessageNotification(message,message1,userId)
+    const users = await this.connectedUserService.findAllUser();
+    for (const user of users) {
+      if (user.user.id == userId) {
+        this.notificationGateway.sendToUser(user.socketId, notification);
+      }
+    }
+  }
+  async roomNotification(message:string,room:Room,userId:number){
+    const notification = await this.notificationService.createRoomNotification(message,room,userId)
     const users = await this.connectedUserService.findAllUser();
     for (const user of users) {
       if (user.user.id == userId) {
