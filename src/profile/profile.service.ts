@@ -468,13 +468,13 @@ export class ProfileService {
             .leftJoinAndSelect("profile.block", "block")
             .leftJoinAndSelect("profile.user", "user")
         if (dto?.firstName) {
-            query.andWhere("profile.firstName LIKE :firstName", {firstName: `%${dto.firstName}%`})
+            query.andWhere("profile.firstName ILIKE :firstName", {firstName: `%${dto.firstName}%`})
         }
         if (dto?.secondName) {
-            query.andWhere("profile.secondName LIKE :secondName", {secondName: `%${dto.secondName}%`})
+            query.andWhere("profile.secondName ILIKE :secondName", {secondName: `%${dto.secondName}%`})
         }
         if (dto?.phone) {
-            query.andWhere("user.phone LIKE :phone", {phone: `%${dto.phone}%`})
+            query.andWhere("user.phone ILIKE :phone", {phone: `%${dto.phone}%`})
         }
         query.limit(limit)
         query.offset(offset)
