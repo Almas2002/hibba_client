@@ -57,7 +57,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
         let connectedUsers = null
         let notification = null
-        if (joinedUsers.some((j) => j.user.id != u.user.id)) {
+        if (!joinedUsers.some((j) => j.user.id != u.user.id)) {
+            console.log("offline")
             await this.notificationService.createMessageNotification("у вас новое сообщение", createMessage, u.user.id)
         }
         for (const user of joinedUsers) {
