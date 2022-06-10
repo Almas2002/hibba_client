@@ -167,7 +167,8 @@ export class ProfileService {
             // .leftJoin("profile.block", "block")
             // .andWhere("block.block  = :block", {block: true})
             .andWhere('profile.user_id <> :userId', {userId: data.userId})
-            .andWhere('gender.id =:id', {id: profile.gender.id === 1 ? 2 : 1});
+            .andWhere('gender.id =:id', {id: profile.gender.id === 1 ? 2 : 1})
+            .orderBy("profile.createdAt","ASC")
 
         if (data?.hobby && profile.hobbies.length) {
             query.andWhere('profile.hobbies IN (:...hobbies)', {hobbies: profile.hobbies});

@@ -87,4 +87,5 @@ export class Profile extends BaseEntity {
 
     @OneToOne(() => Block, block => block.workerProfile)
     myBlocks: Block[]
+
 }
