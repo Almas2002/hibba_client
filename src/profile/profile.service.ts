@@ -176,7 +176,7 @@ export class ProfileService {
         }
         if (data?.category) {
             console.log(data.category)
-            query.andWhere('category.id = :id', {id: data.category});
+            query.andWhere('profile.categoryId = :id', {id: data.category});
         }
         if (data?.region) {
             query.andWhere('region.id = :id', {id: data.region});
