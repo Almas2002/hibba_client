@@ -166,7 +166,7 @@ export class ProfileService {
             .leftJoinAndSelect('profile.photos', 'photos')
             // .leftJoin("profile.block", "block")
             // .andWhere("block.block  = :block", {block: true})
-            .andWhere('profile.id != id', {id: profile.id})
+            .andWhere('profile.id != :id', {id: profile.id})
             .andWhere('gender.id = :id', {id: profile.gender.id === 1 ? 2 : 1})
             .orderBy("profile.createdAt", "DESC")
 
