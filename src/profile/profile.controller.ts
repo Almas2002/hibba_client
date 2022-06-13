@@ -171,7 +171,7 @@ export class ProfileController {
     @UseGuards(RoleGuards)
     @Get('my-blockProfiles/:id')
     blockProfilesId(@Param('id')id:number) {
-        return this.profileService.getMyBlockProfiles(id)
+        return this.profileService.getMyBlockProfiles(id,true)
     }
 
     @ApiQuery({name: 'limit', type: 'int', required: false})
