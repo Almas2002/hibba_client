@@ -174,6 +174,10 @@ export class ProfileService {
             const ids = data.hobby.split(",")
             query.andWhere('profile.hobbies IN (:...hobbies)', {hobbies: ids});
         }
+        if (data?.category) {
+            console.log(data.category)
+            query.andWhere('category.id = :id', {id: data.category});
+        }
         if (data?.region) {
             query.andWhere('region.id = :id', {id: data.region});
         }
@@ -211,10 +215,7 @@ export class ProfileService {
         if (data?.kids) {
             query.andWhere('profile.kids <> 0');
         }
-        if (data?.category) {
-            console.log(data.category)
-            query.andWhere('category.id = :id', {id: data.category});
-        }
+
         query.limit(limit);
         query.offset(offset);
 
