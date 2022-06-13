@@ -91,5 +91,13 @@ export class UserService {
         return a.amount
     }
 
+    async getRoles(id: number) {
+        const query = this.userRepository.createQueryBuilder("user")
+            .leftJoinAndSelect("user.roles", "roles")
+            .andWhere("user.id = :id",{id})
+        const user = await query.getOne()
+        return user.roles
+    }
+
 
 }

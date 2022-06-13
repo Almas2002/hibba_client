@@ -21,7 +21,7 @@ import {NotificationGatewayService} from "./service/notification-gateway.service
 @WebSocketGateway({namespace: '/', cors: {origin: "*", credentials: true, methods: ["GET", "POST"],}})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
     constructor(private connectedUserService: ConnectedUserService,
-                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService,@Inject(forwardRef(()=>NotificationGatewayService))private notificationService: NotificationGatewayService) {
+                private messageService: MessageService, private roomService: RoomService, private joinedRoomService: JoinedRoomService, @Inject(forwardRef(() => NotificationGatewayService)) private notificationService: NotificationGatewayService) {
     }
 
     @WebSocketServer() wss: Server;
@@ -54,17 +54,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const createMessage = await this.messageService.createMessage({...data, userId: socket.data.user.id});
 
         const u = room.users.filter(u => u.id != socket.data.user.id)[0]
-        console.log(socket.data.user.id)
-        console.log(room.users)
-        console.log(u)
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
-        const b = joinedUsers.filter((us)=>us.user.id === u.id)
+        const b = joinedUsers.filter((us) => us.user.id === u.id)
 
         for (const user of joinedUsers) {
             await this.wss.to(user.socketId).emit('messageAdded', createMessage);
         }
-        if(!b.length){
-            await this.notificationService.messageNotification("у вас новое сообщение",createMessage,u.id)
+        if (!b.length) {
+            await this.notificationService.messageNotification("у вас новое сообщение", createMessage, u.id)
         }
     }
 

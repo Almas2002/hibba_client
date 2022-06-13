@@ -168,7 +168,7 @@ export class ProfileService {
             // .andWhere("block.block  = :block", {block: true})
             .andWhere('profile.user_id <> :userId', {userId: data.userId})
             .andWhere('gender.id =:id', {id: profile.gender.id === 1 ? 2 : 1})
-            .orderBy("profile.createdAt","DESC")
+            .orderBy("profile.createdAt", "DESC")
 
         if (data?.hobby) {
             const ids = data.hobby.split(",")
@@ -200,15 +200,15 @@ export class ProfileService {
                 firstName: `%${data.search}%`,
                 secondName: `%${data.search}%`,
             })
-                // .andWhere('profile.userId <> :userId', { userId: data.userId })
-                .andWhere('profile.block = :block', {block: false});
+            // .andWhere('profile.userId <> :userId', { userId: data.userId })
+            // .andWhere('profile.block = :block', {block: false});
             //.andWhere('gender.id = any', { ids: ['1', '2'] });
 
         }
-        if(data?.kids === false){
+        if (data?.kids === false) {
             query.andWhere('profile.kids = 0 ');
         }
-        if(data?.kids){
+        if (data?.kids) {
             query.andWhere('profile.kids <> 0');
         }
         if (data?.category) {
@@ -298,7 +298,7 @@ export class ProfileService {
         return await this.profileRepository.findOne({
             where: {id},
             relations: ["block", "block.workerProfile", "region", "category", "hobbies", "gender",
-                "complaints", "sendReports", "complaints.reporter", "sendReports.culprit","complaints.message","sendReports.message"]
+                "complaints", "sendReports", "complaints.reporter", "sendReports.culprit", "complaints.message", "sendReports.message"]
         })
     }
 
@@ -445,11 +445,11 @@ export class ProfileService {
         })
     }
 
-    async getMyBlockProfiles(id: number,param:boolean = false) {
+    async getMyBlockProfiles(id: number, param: boolean = false) {
         let profile
-        if(!param){
+        if (!param) {
             profile = await this.profileRepository.findOne({where: {user: {id}}})
-        }else {
+        } else {
             profile = await this.profileRepository.findOne({where: {id}})
         }
         const query = this.profileRepository.createQueryBuilder("profile")
