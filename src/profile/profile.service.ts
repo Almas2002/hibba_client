@@ -178,6 +178,7 @@ export class ProfileService {
         }
         if (data?.category) {
             const ids = data.category.split(",")
+            console.log(ids)
             query.andWhere('profile.categoryId IN (:...id)', {id: ids});
         }
         if (data?.region) {
