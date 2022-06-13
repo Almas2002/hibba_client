@@ -53,7 +53,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
         const createMessage = await this.messageService.createMessage({...data, userId: socket.data.user.id});
 
-        const u = room.users.filter(u => u.id != socket.data.user)[0]
+        const u = room.users.filter(u => u.id == socket.data.user)[0]
         console.log(u)
         const joinedUsers = await this.joinedRoomService.findByRoomId(room.id);
         const b = joinedUsers.filter((us)=>us.user.id === u.id)
