@@ -178,7 +178,7 @@ export class ProfileService {
         }
         if (data?.category) {
             const ids = data.category.split(",")
-            query.andWhere('profile.categoryId IN (:...hobbies)', {id: ids});
+            query.andWhere('profile.categoryId IN (:...id)', {id: ids});
         }
         if (data?.region) {
             query.andWhere('profile.regionId = :id', {id: data.region});
