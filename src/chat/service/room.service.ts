@@ -6,7 +6,6 @@ import {Repository} from 'typeorm';
 import {IPagination} from '../../profile/interfaces/get-profile-query.interface';
 import {SemiProfileService} from "./semi-profile.service";
 import {NotificationGatewayService} from "../../notification/service/notification-gateway.service";
-import {NotificationType} from "../../notification/notification.entity";
 
 @Injectable()
 export class RoomService {

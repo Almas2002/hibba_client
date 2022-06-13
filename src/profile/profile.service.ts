@@ -170,8 +170,9 @@ export class ProfileService {
             .andWhere('gender.id =:id', {id: profile.gender.id === 1 ? 2 : 1})
             .orderBy("profile.createdAt","DESC")
 
-        if (data?.hobby && profile.hobbies.length) {
-            query.andWhere('profile.hobbies IN (:...hobbies)', {hobbies: profile.hobbies});
+        if (data?.hobby) {
+            const ids = data.hobby.split(",")
+            query.andWhere('profile.hobbies IN (:...hobbies)', {hobbies: ids});
         }
         if (data?.region) {
             query.andWhere('region.id = :id', {id: data.region});
@@ -189,7 +190,7 @@ export class ProfileService {
             query.andWhere('profile.block = :block', {block: data.block});
         }
         if (data?.ageFrom && data?.ageTo) {
-            query.andWhere('profile.price >= :price2 AND profile.price <= :price', {
+            query.andWhere('profile.age >= :price2 AND profile.age <= :price', {
                 price: data.ageTo,
                 price2: data.ageFrom,
             });
@@ -203,6 +204,12 @@ export class ProfileService {
                 .andWhere('profile.block = :block', {block: false});
             //.andWhere('gender.id = any', { ids: ['1', '2'] });
 
+        }
+        if(data?.kids === false){
+            query.andWhere('profile.kids = 0 ');
+        }
+        if(data?.kids){
+            query.andWhere('profile.kids <> 0');
         }
         if (data?.category) {
             query.andWhere('category.id = :id', {id: data.category});
@@ -438,8 +445,13 @@ export class ProfileService {
         })
     }
 
-    async getMyBlockProfiles(id: number) {
-        const profile = await this.profileRepository.findOne({where: {user: {id}}})
+    async getMyBlockProfiles(id: number,param:boolean = false) {
+        let profile
+        if(!param){
+            profile = await this.profileRepository.findOne({where: {user: {id}}})
+        }else {
+            profile = await this.profileRepository.findOne({where: {id}})
+        }
         const query = this.profileRepository.createQueryBuilder("profile")
             .leftJoinAndSelect("profile.block", "block")
             .leftJoinAndSelect("profile.avatar", "avatar")

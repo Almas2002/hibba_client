@@ -10,7 +10,7 @@ import {forwardRef, Inject, OnModuleInit, UnauthorizedException} from '@nestjs/c
 import {verify} from 'jsonwebtoken';
 
 import {ConnectedUserService} from '../socket/socket.service';
-import {Notification, NotificationType} from './notification.entity';
+import {Notification} from './notification.entity';
 import {IMessage} from './interface/interface';
 import {MessageService} from '../chat/service/message.service';
 import {RoomService} from '../chat/service/room.service';
