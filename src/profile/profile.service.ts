@@ -156,7 +156,7 @@ export class ProfileService {
         const page = data.page || 1;
         const offset = page * limit - limit;
         const profile = await this.getUserProfile(data.userId);
-        const query = await this.profileRepository.createQueryBuilder('profile')
+        const query = this.profileRepository.createQueryBuilder('profile')
             .leftJoinAndSelect('profile.hobbies', 'hobbies')
             .leftJoinAndSelect('profile.gender', 'gender')
             .leftJoinAndSelect('profile.category', 'category')
@@ -166,7 +166,7 @@ export class ProfileService {
             .leftJoinAndSelect('profile.photos', 'photos')
             // .leftJoin("profile.block", "block")
             // .andWhere("block.block  = :block", {block: true})
-            .andWhere('profile.user_id <> :userId', {userId: data.userId})
+            .andWhere('profile.id != id', {id: profile.id})
             .andWhere('gender.id = :id', {id: profile.gender.id === 1 ? 2 : 1})
             .orderBy("profile.createdAt", "DESC")
 
