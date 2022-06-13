@@ -212,6 +212,7 @@ export class ProfileService {
             query.andWhere('profile.kids <> 0');
         }
         if (data?.category) {
+            console.log(data.category)
             query.andWhere('category.id = :id', {id: data.category});
         }
         query.limit(limit);
