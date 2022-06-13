@@ -168,7 +168,9 @@ export class ProfileService {
             // .andWhere("block.block  = :block", {block: true})
             .andWhere('profile.id != :id', {id: profile.id})
             .andWhere('gender.id = :id', {id: profile.gender.id === 1 ? 2 : 1})
-            .orderBy("profile.createdAt", "DESC")
+
+        query.limit(limit);
+        query.offset(offset);
 
         if (data?.hobby) {
             const ids = data.hobby.split(",")
@@ -216,8 +218,6 @@ export class ProfileService {
             query.andWhere('profile.kids <> 0');
         }
 
-        query.limit(limit);
-        query.offset(offset);
 
         const profiles = await query.getMany();
         const count = await query.getCount();
