@@ -167,12 +167,12 @@ export class ProfileService {
             // .leftJoin("profile.block", "block")
             // .andWhere("block.block  = :block", {block: true})
             .andWhere('profile.user_id <> :userId', {userId: data.userId})
-            .andWhere('gender.id =:id', {id: profile.gender.id === 1 ? 2 : 1})
+            .andWhere('gender.id = :id', {id: profile.gender.id === 1 ? 2 : 1})
             .orderBy("profile.createdAt", "DESC")
 
         if (data?.hobby) {
             const ids = data.hobby.split(",")
-            query.andWhere('profile.hobbies IN (:...hobbies)', {hobbies: ids});
+            query.andWhere('hobbies.id IN (:...hobbies)', {hobbies: ids});
         }
         if (data?.category) {
             console.log(data.category)
