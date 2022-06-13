@@ -152,8 +152,8 @@ export class ProfileService {
     }
 
     async getProFiles(data: GetProfileQueryInterface) {
-        const limit = data.limit || 10;
-        const page = data.page || 1;
+        const limit = data?.limit || 10;
+        const page = data?.page || 1;
         const offset = page * limit - limit;
         const profile = await this.getUserProfile(data.userId);
         const query = this.profileRepository.createQueryBuilder('profile')
@@ -181,10 +181,10 @@ export class ProfileService {
             query.andWhere('profile.categoryId = :id', {id: data.category});
         }
         if (data?.region) {
-            query.andWhere('region.id = :id', {id: data.region});
+            query.andWhere('profile.regionId = :id', {id: data.region});
         }
         if (data?.religion) {
-            query.andWhere('religion.id = :id', {id: data.religion});
+            query.andWhere('profile.religionId = :id', {id: data.religion});
         }
         if (!data?.ageFrom && data.ageTo) {
             query.andWhere('profile.age <= :age ', {age: data.ageTo});
