@@ -166,7 +166,6 @@ export class ProfileService {
             .leftJoinAndSelect('profile.photos', 'photos')
             // .leftJoin("profile.block", "block")
             // .andWhere("block.block  = :block", {block: true})
-            .andWhere('profile.id != :id', {id: profile.id})
             .andWhere('gender.id = :id', {id: profile.gender.id === 1 ? 2 : 1})
 
         query.limit(limit);
@@ -179,7 +178,7 @@ export class ProfileService {
         if (data?.category) {
             const ids = data.category.split(",")
             console.log(ids)
-            query.andWhere('profile.categoryId IN (:...id)', {id: ids});
+            query.andWhere('category.id IN (:...id)', {id: ids});
         }
         if (data?.region) {
             query.andWhere('profile.regionId = :id', {id: data.region});
