@@ -3,7 +3,7 @@ export interface GetProfileQueryInterface extends IPagination{
   ageTo?:number;
   ageFrom?:number;
   block?:boolean;
-  category?:number;
+  category?:string;
   hobby?:string
   religion?:number
   search?:string
