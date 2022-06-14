@@ -164,39 +164,44 @@ export class ProfileService {
             .leftJoinAndSelect('profile.region', 'region')
             .leftJoinAndSelect('profile.avatar', 'avatar')
             .leftJoinAndSelect('profile.photos', 'photos')
-            // .leftJoin("profile.block", "block")
-            // .andWhere("block.block  = :block", {block: true})
+        // .leftJoin("profile.block", "block")
+        // .andWhere("block.block  = :block", {block: true})
 
 
         query.limit(limit);
         query.offset(offset);
 
-        if (data?.hobby) {
+        if (!data?.region && data.hobby && !data.religion) {
             const ids = data.hobby.split(",")
-            query.andWhere('hobbies.id IN (:...hobbies)', {hobbies: ids});
+            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId', {hobbies: ids,genderId:profile.gender.id});
         }
         if (data?.category) {
             query.andWhere('category.id = :id ', {id: data.category});
         }
-        if (data?.region) {
-            query.andWhere('profile.regionId = :id', {id: data.region});
+        if (data?.region && !data.hobby && !data.religion) {
+            query.andWhere('profile.regionId = :id AND profile.genderId != :genderId', {id: data.region,genderId:profile.gender.id});
         }
-        if (data?.religion) {
-            query.andWhere('profile.religionId = :id', {id: data.religion});
+        if(data?.region && !data.hobby && data.religion){
+            query.andWhere('profile.regionId = :id AND profile.religionId = :religionId,AND profile.genderId != :genderId', {id: data.region,religionId:data.religion,genderId:profile.gender.id});
+        }
+
+        if (!data?.region && !data.hobby && data.religion) {
+            query.andWhere('profile.religionId = :id AND profile.genderId != :genderId', {id: data.religion,genderId:profile.gender.id});
         }
         if (!data?.ageFrom && data.ageTo) {
-            query.andWhere('profile.age <= :age ', {age: data.ageTo});
+            query.andWhere('profile.age <= :age AND profile.genderId != :genderId ', {age: data.ageTo,genderId:profile.gender.id});
         }
         if (data?.ageFrom && !data.ageTo) {
-            query.andWhere('profile.age >= :age ', {age: data.ageFrom});
+            query.andWhere('profile.age >= :age AND profile.genderId != :genderId ', {age: data.ageFrom,genderId:profile.gender.id});
         }
         if (data?.block) {
             query.andWhere('profile.block = :block', {block: data.block});
         }
         if (data?.ageFrom && data?.ageTo) {
-            query.andWhere('profile.age >= :price2 AND profile.age <= :price', {
+            query.andWhere('profile.age >= :price2 AND profile.age <= :price AND profile.genderId != :genderId', {
                 price: data.ageTo,
-                price2: data.ageFrom,
+                price2: data.ageFrom
+                ,genderId:profile.gender.id
             });
         }
         if (data?.search) {
