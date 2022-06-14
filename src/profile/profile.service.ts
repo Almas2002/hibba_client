@@ -206,7 +206,7 @@ export class ProfileService {
         }
         if (data?.region && data.hobby && data.religion) {
             const ids = data.hobby.split(",")
-            query.andWhere('profile.regionId = :id AND profile.religionId = :religionId AND profile.genderId != :genderId AND hobbies.id IN (:...hobbies)', {
+            query.andWhere('hobbies.id IN (:...hobbies) AND profile.regionId = :id AND profile.religionId = :religionId AND profile.genderId != :genderId', {
                 id: data.region,
                 religionId: data.religion,
                 genderId: profile.gender.id,
