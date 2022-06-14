@@ -6,11 +6,12 @@ import {Like} from "../../profile/models/like.entity";
 import {NotificationType} from "../notification.entity";
 import {Message} from "../../chat/model/message.entity";
 import {Room} from "../../chat/model/room.entity";
+import {PushNotificationService} from "../../pushNotification/pushNotification.service";
 
 @Injectable()
 export class NotificationGatewayService {
   constructor(private notificationService: NotificationService, private notificationGateway: ChatGateway,
-              private connectedUserService: ConnectedUserService) {
+              private connectedUserService: ConnectedUserService,private push:PushNotificationService) {
 
   }
 
@@ -25,6 +26,10 @@ export class NotificationGatewayService {
   async congratulationNotificationForOneUser(message: string, userId: number,type:NotificationType = NotificationType.NOTIFICATION) {
     const notification = await this.notificationService.createNotificationForOneUser(message, userId,type);
     const users = await this.connectedUserService.findAllUser();
+    const candidate = users.filter(u=>u.user.id === userId)
+    if(!candidate.length){
+      await this.push.sendNotification("",notification)
+    }
     for (const user of users) {
       if (user.user.id == userId) {
         this.notificationGateway.sendToUser(user.socketId, notification);
