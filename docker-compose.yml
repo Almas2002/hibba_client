@@ -14,9 +14,9 @@ services:
     - "3000:3000"
     depends_on:
       - db
-  nginx:
+  webserver:
     image: nginx:stable-alpine
-    container_name: nginx
+    container_name: nginx_conrain
     ports:
       - "80:80"
     volumes:
