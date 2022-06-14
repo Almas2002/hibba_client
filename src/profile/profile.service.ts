@@ -182,7 +182,7 @@ export class ProfileService {
             query.andWhere('profile.regionId = :id AND profile.genderId != :genderId', {id: data.region,genderId:profile.gender.id});
         }
         if(data?.region && !data.hobby && data.religion){
-            query.andWhere('profile.regionId = :id AND profile.religionId = :religionId,AND profile.genderId != :genderId', {id: data.region,religionId:data.religion,genderId:profile.gender.id});
+            query.andWhere('profile.regionId = :id AND profile.religionId = :religionId AND profile.genderId != :genderId', {id: data.region,religionId:data.religion,genderId:profile.gender.id});
         }
 
         if (!data?.region && !data.hobby && data.religion) {
