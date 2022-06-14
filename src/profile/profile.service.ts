@@ -173,26 +173,64 @@ export class ProfileService {
 
         if (!data?.region && data.hobby && !data.religion) {
             const ids = data.hobby.split(",")
-            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId', {hobbies: ids,genderId:profile.gender.id});
+            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId', {
+                hobbies: ids,
+                genderId: profile.gender.id
+            });
         }
+        if (data?.region && data.hobby && !data.religion) {
+            const ids = data.hobby.split(",")
+            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId AND profile.regionId = :regionId', {
+                hobbies: ids,
+                genderId: profile.gender.id,
+                regionId:data.region
+            });
+        }
+        if (!data?.region && data.hobby && data.religion) {
+            const ids = data.hobby.split(",")
+            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId AND profile.religionId = :religionId ', {
+                hobbies: ids,
+                genderId: profile.gender.id,
+                religionId:data.religion
+            });
+        }
+
         if (data?.category) {
             query.andWhere('category.id = :id ', {id: data.category});
         }
         if (data?.region && !data.hobby && !data.religion) {
-            query.andWhere('profile.regionId = :id AND profile.genderId != :genderId', {id: data.region,genderId:profile.gender.id});
+            query.andWhere('profile.regionId = :id AND profile.genderId != :genderId', {
+                id: data.region,
+                genderId: profile.gender.id
+            });
         }
-        if(data?.region && !data.hobby && data.religion){
-            query.andWhere('profile.regionId = :id AND profile.religionId = :religionId AND profile.genderId != :genderId', {id: data.region,religionId:data.religion,genderId:profile.gender.id});
+        if (data?.region && data.hobby && data.religion) {
+            const ids = data.hobby.split(",")
+            query.andWhere('profile.regionId = :id AND profile.religionId = :religionId AND profile.genderId != :genderId AND hobbies.id IN (:...hobbies)', {
+                id: data.region,
+                religionId: data.religion,
+                genderId: profile.gender.id,
+                hobbies:ids
+            });
         }
 
         if (!data?.region && !data.hobby && data.religion) {
-            query.andWhere('profile.religionId = :id AND profile.genderId != :genderId', {id: data.religion,genderId:profile.gender.id});
+            query.andWhere('profile.religionId = :id AND profile.genderId != :genderId', {
+                id: data.religion,
+                genderId: profile.gender.id
+            });
         }
         if (!data?.ageFrom && data.ageTo) {
-            query.andWhere('profile.age <= :age AND profile.genderId != :genderId ', {age: data.ageTo,genderId:profile.gender.id});
+            query.andWhere('profile.age <= :age AND profile.genderId != :genderId ', {
+                age: data.ageTo,
+                genderId: profile.gender.id
+            });
         }
         if (data?.ageFrom && !data.ageTo) {
-            query.andWhere('profile.age >= :age AND profile.genderId != :genderId ', {age: data.ageFrom,genderId:profile.gender.id});
+            query.andWhere('profile.age >= :age AND profile.genderId != :genderId ', {
+                age: data.ageFrom,
+                genderId: profile.gender.id
+            });
         }
         if (data?.block) {
             query.andWhere('profile.block = :block', {block: data.block});
@@ -201,7 +239,7 @@ export class ProfileService {
             query.andWhere('profile.age >= :price2 AND profile.age <= :price AND profile.genderId != :genderId', {
                 price: data.ageTo,
                 price2: data.ageFrom
-                ,genderId:profile.gender.id
+                , genderId: profile.gender.id
             });
         }
         if (data?.search) {
