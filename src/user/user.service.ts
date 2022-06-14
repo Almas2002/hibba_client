@@ -83,7 +83,6 @@ export class UserService {
     }
 
     async getStatistic(dto: UserStatisticDto) {
-        console.log("a")
         const query = this.userVisitRepository.createQueryBuilder("visit")
             .select("SUM(visit.amount) ", "amount")
             .andWhere("visit.date >= :dateFrom AND visit.date <= :dateTo", {dateFrom: dto.dateFrom, dateTo: dto.dateTo})
