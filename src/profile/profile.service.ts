@@ -217,7 +217,7 @@ export class ProfileService {
         }
         // console.log(profile.gender)
         // console.log(profile.gender.id === 1 ? 2 : 1)
-        query.andWhere('profile.genderId <> :id', {id: profile.gender.id})
+
         const profiles = await query.getMany();
         const count = await query.getCount();
         return {profiles, count};
