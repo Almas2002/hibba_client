@@ -43,7 +43,7 @@ export class AuthController {
     @ApiResponse({status: 201})
     @Post('refresh')
     async AzimRefresh(@Body('refresh_token')refreshToken: string,@Body('push_token')push_token: string, @Res({passthrough: true})response) {
-        const res = await this.authService.refresh(refreshToken);
+        const res = await this.authService.refresh(refreshToken,push_token);
         response.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
         return res;
     }

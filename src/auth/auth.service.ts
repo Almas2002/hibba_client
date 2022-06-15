@@ -96,9 +96,8 @@ export class AuthService {
             throw new UnauthorizedException({message: 'вы не загерестрированы'});
         }
         const user = await this.userService.findUserById(verifyToken.id);
-        console.log(push_token)
+
         if(push_token){
-            console.log("push token ")
             user.pushToken = push_token
             await this.userService.save(user)
         }
