@@ -164,8 +164,9 @@ export class ProfileService {
             .leftJoinAndSelect('profile.region', 'region')
             .leftJoinAndSelect('profile.avatar', 'avatar')
             .leftJoinAndSelect('profile.photos', 'photos')
-        // .leftJoin("profile.block", "block")
-        // .andWhere("block.block  = :block", {block: true})
+            .andWhere("profile.id != :id",{id:profile.id})
+            .leftJoin("profile.block", "block")
+            .andWhere("block.block  = :block", {block: false})
 
 
         query.limit(limit);
