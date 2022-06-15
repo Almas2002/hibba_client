@@ -28,4 +28,7 @@ export class User {
 
     @OneToMany(() => UserVisit, v => v.user)
     visit: UserVisit[]
+
+    @Column({nullable:true})
+    pushToken:string
 }

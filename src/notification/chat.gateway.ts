@@ -61,7 +61,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             await this.wss.to(user.socketId).emit('messageAdded', createMessage);
         }
         if (!b.length) {
-            await this.notificationService.messageNotification("у вас новое сообщение", createMessage, u.id)
+            await this.notificationService.messageNotification("у вас новое сообщение", createMessage, u)
         }
     }
 

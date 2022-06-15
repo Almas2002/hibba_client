@@ -97,6 +97,9 @@ export class UserService {
         const user = await query.getOne()
         return user.roles
     }
+    async save(user:User){
+        return  await this.userRepository.save(user)
+    }
 
 
 }

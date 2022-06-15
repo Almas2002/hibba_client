@@ -10,9 +10,5 @@ export class NotificationController {
     return this.notificationGatewayService.congratulationNotification(message);
   }
 
-  @Post("/one")
-  createNotificationForOneUser(@Body('userId')userId: number, @Body('message')message: string) {
-    return this.notificationGatewayService.congratulationNotificationForOneUser(message, userId)
-  }
 
 }

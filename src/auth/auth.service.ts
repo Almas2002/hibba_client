@@ -86,7 +86,7 @@ export class AuthService {
         return this.jwtService.verify(refresh_token, {secret: 'refresh'});
     }
 
-    async refresh(refresh_token) {
+    async refresh(refresh_token,push_token?:string) {
         if (!refresh_token) {
             throw new UnauthorizedException({message: 'вы не загерестрированы'});
         }
@@ -96,6 +96,10 @@ export class AuthService {
             throw new UnauthorizedException({message: 'вы не загерестрированы'});
         }
         const user = await this.userService.findUserById(verifyToken.id);
+        if(push_token){
+            user.pushToken = push_token
+            await this.userService.save(user)
+        }
         await this.userService.visit(user.id)
         const tokens = this.generationToken(user);
         await this.saveToken(user, tokens.refresh_token);

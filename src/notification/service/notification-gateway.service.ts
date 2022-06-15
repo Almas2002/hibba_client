@@ -3,10 +3,11 @@ import {NotificationService} from './notification.service';
 import {ChatGateway} from '../chat.gateway';
 import {ConnectedUserService} from '../../socket/socket.service';
 import {Like} from "../../profile/models/like.entity";
-import {NotificationType} from "../notification.entity";
+import {Notification, NotificationType} from "../notification.entity";
 import {Message} from "../../chat/model/message.entity";
 import {Room} from "../../chat/model/room.entity";
 import {PushNotificationService} from "../../pushNotification/pushNotification.service";
+import {User} from "../../user/user.entity";
 
 @Injectable()
 export class NotificationGatewayService {
@@ -23,46 +24,38 @@ export class NotificationGatewayService {
     }
   }
 
-  async congratulationNotificationForOneUser(message: string, userId: number,type:NotificationType = NotificationType.NOTIFICATION) {
-    const notification = await this.notificationService.createNotificationForOneUser(message, userId,type);
-    const users = await this.connectedUserService.findAllUser();
-    const candidate = users.filter(u=>u.user.id === userId)
-    if(!candidate.length){
-      await this.push.sendNotification("",notification)
-    }
-    for (const user of users) {
-      if (user.user.id == userId) {
-        this.notificationGateway.sendToUser(user.socketId, notification);
-      }
-    }
+  async congratulationNotificationForOneUser(message: string, userTo: User,type:NotificationType = NotificationType.NOTIFICATION) {
+    const notification = await this.notificationService.createNotificationForOneUser(message, userTo.id,type);
+    await this.defaultNotificationOne(notification,userTo)
   }
-  async likeNotification(message:string,like:Like,userId:number){
-    const notification = await this.notificationService.createLikeNotification(message,userId,like)
-    const users = await this.connectedUserService.findAllUser();
-    for (const user of users) {
-      if (user.user.id == userId) {
-        this.notificationGateway.sendToUser(user.socketId, notification);
-      }
-    }
+  async likeNotification(message:string,like:Like,userTo:User){
+    const notification = await this.notificationService.createLikeNotification(message,userTo.id,like)
+    await this.defaultNotificationOne(notification,userTo)
   }
 
-  async messageNotification(message:string,message1:Message,userId:number){
-    const notification = await this.notificationService.createMessageNotification(message,message1,userId)
-    const users = await this.connectedUserService.findAllUser();
-    for (const user of users) {
-      if (user.user.id == userId) {
-        this.notificationGateway.sendToUser(user.socketId, notification);
-      }
-    }
+  async messageNotification(message:string,message1:Message,userTo:User){
+    const notification = await this.notificationService.createMessageNotification(message,message1,userTo.id)
+    await this.defaultNotificationOne(notification,userTo)
   }
-  async roomNotification(message:string,room:Room,userId:number){
-    const notification = await this.notificationService.createRoomNotification(message,room,userId)
+  async roomNotification(message:string,room:Room,userTo:User){
+    const notification = await this.notificationService.createRoomNotification(message,room,userTo.id)
+    await this.defaultNotificationOne(notification,userTo)
+  }
+  private async defaultNotificationOne(notification:Notification,userTo:User){
     const users = await this.connectedUserService.findAllUser();
-    for (const user of users) {
-      if (user.user.id == userId) {
-        this.notificationGateway.sendToUser(user.socketId, notification);
+    const candidate = users.filter(u=>u.user.id === userTo.id)
+    if(!candidate.length){
+      if(userTo.pushToken){
+        await this.push.sendNotification(userTo.pushToken,notification)
+      }
+    }else {
+      for (const user of users) {
+        if (user.user.id == userTo.id) {
+          this.notificationGateway.sendToUser(user.socketId, notification);
+        }
       }
     }
+
   }
 
 }
