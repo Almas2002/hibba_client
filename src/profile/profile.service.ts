@@ -167,7 +167,7 @@ export class ProfileService {
             .andWhere("profile.id != :id",{id:profile.id})
             .leftJoin("profile.block", "block")
             .andWhere("block.block  = :block", {block: false})
-
+            .andWhere("profile.genderId != :genderId",{genderId: profile.gender.id})
 
         query.limit(limit);
         query.offset(offset);
