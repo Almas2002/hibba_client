@@ -1,16 +1,23 @@
 import {Injectable} from "@nestjs/common";
-import {app,credential,initializeApp,messaging} from "firebase-admin"
-import conf from "./conf";
+import * as admin from "firebase-admin"
+import * as serviceAccount from "./conf.json"
 import {Notification} from "../notification/notification.entity";
+import {ServiceAccount} from "firebase-admin/lib/app";
 @Injectable()
 export class FireBase{
-
-    ref(){
-      return initializeApp({
-          credential:credential.cert({clientEmail:conf.client_email,privateKey:conf.private_key,projectId:conf.project_id}),
-      })
-    }
+     constructor() {
+         admin.initializeApp({
+             credential: admin.credential.cert(serviceAccount as ServiceAccount),
+         })
+     }
     async sendNotification(token:string,notification:Notification){
-         return await messaging(this.ref()).send({token:token,...notification})
+          const payload = {
+              notification:{
+                  title:"Привет",
+                  body:"Салам",
+              }
+          }
+
+         return await admin.messaging().sendToDevice(token,payload)
     }
 }
