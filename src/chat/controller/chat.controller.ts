@@ -36,8 +36,8 @@ export class ChatController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('room')
-  getRooms(@UserDecorator('id')id: number, @Query()pagination: IPagination) {
-    return this.roomService.getRoomsForUser(id, pagination);
+  getRooms(@UserDecorator('id')id: number) {
+    return this.roomService.getRoomsForUser(id);
   }
 
   @ApiOperation({ summary: 'создать чат' })

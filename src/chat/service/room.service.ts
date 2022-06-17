@@ -12,10 +12,7 @@ export class RoomService {
     constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService, @Inject(forwardRef(() => NotificationGatewayService)) private notification: NotificationGatewayService) {
     }
 
-    async getRoomsForUser(userId: number, option?: IPagination) {
-        const limit = option?.limit || 10;
-        const page = option?.page || 1;
-        const offset = page * limit - limit;
+    async getRoomsForUser(userId: number) {
         const query = this.roomRepository
             .createQueryBuilder('room')
             .leftJoin('room.users', 'users')
@@ -24,12 +21,9 @@ export class RoomService {
             .leftJoinAndSelect("all_users.profile", "profile")
             .leftJoinAndSelect("profile.avatar", 'avatar')
             .orderBy('room.createAt', 'DESC')
-            .limit(limit)
-            .offset(offset);
-        let rooms = await query.getMany()
-        const f = await rooms[0]
-        rooms = rooms.filter((e)=>f.id !=e.id)
-        return rooms
+         return  await query.getMany()
+
+
     }
 
     async createRoom(creator: User, userId: number) {
