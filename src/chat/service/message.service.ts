@@ -54,7 +54,7 @@ export class MessageService {
       .leftJoin('message.room', 'room')
       .where('room.id = :roomId', { roomId: id })
       .leftJoinAndSelect('message.user', 'user')
-      .orderBy('room.updatedAt', 'DESC');
+      .orderBy('message.createAt', 'DESC');
     if(newMessages){
       query.andWhere('message.read = :read',{read:false})
     }

@@ -11,10 +11,46 @@ export class FireBase{
          })
      }
     async sendNotification(token:string,notification:Notification){
+         notification.text="helloo"
+        notification.id = 1000
           const payload = {
               notification:{
-                  title:"Привет",
-                  body:"Салам",
+                  title:"Хареш Азим",
+                  body: "Ислам тож ХАреш",
+              },
+              // "data" : {
+              //     "volume" : "3.21.15",
+              //     "contents" : "http://www.news-magazine.com/world-week/21659772"
+              // },
+              "data":{
+                  "ttl":"86400s",
+                  "data":JSON.stringify(notification)
+              },
+          }
+          const data = {
+              "message":{
+                  "topic":"subscriber-updates",
+                  "notification":{
+                      "body" : "This week's edition is now available.",
+                      "title" : "NewsMagazine.com",
+                  },
+                  "data" : {
+                      "volume" : "3.21.15",
+                      "contents" : "http://www.news-magazine.com/world-week/21659772"
+                  },
+                  "android":{
+                      "priority":"normal"
+                  },
+                  "apns":{
+                      "headers":{
+                          "apns-priority":"5"
+                      }
+                  },
+                  "webpush": {
+                      "headers": {
+                          "Urgency": "high"
+                      }
+                  }
               }
           }
 
