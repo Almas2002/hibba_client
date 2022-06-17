@@ -23,7 +23,7 @@ export class RoomService {
             .leftJoinAndSelect('room.users', 'all_users')
             .leftJoinAndSelect("all_users.profile", "profile")
             .leftJoinAndSelect("profile.avatar", 'avatar')
-            .orderBy('room.createdAt', 'DESC')
+            .orderBy('room.createAt', 'DESC')
             .limit(limit)
             .offset(offset);
         let rooms = await query.getMany()
