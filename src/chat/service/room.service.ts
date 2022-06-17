@@ -29,7 +29,6 @@ export class RoomService {
         let rooms = await query.getMany()
         const f = await rooms[0]
         rooms = rooms.filter((e)=>f.id !=e.id)
-        rooms.push(f)
         return rooms
     }
 
