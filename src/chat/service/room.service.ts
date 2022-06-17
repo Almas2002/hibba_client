@@ -30,7 +30,7 @@ export class RoomService {
         const f = await rooms[0]
         rooms = rooms.filter((e)=>f.id !=e.id)
         rooms.push(f)
-        return await query.getMany();
+        return rooms
     }
 
     async createRoom(creator: User, userId: number) {
