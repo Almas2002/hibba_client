@@ -10,6 +10,6 @@ export class Hobby {
   value: string;
   @ManyToOne(()=>Gender,gender=>gender.hobbies)
   gender: Gender;
-  @ManyToMany(()=>Profile,profile=>profile.hobbies)
+  @ManyToMany(()=>Profile,profile=>profile.hobbies,{onDelete:"CASCADE"})
   users: Profile[];
 }

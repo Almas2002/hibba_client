@@ -43,7 +43,7 @@ export class Profile extends BaseEntity {
     category: Category;
     @ManyToOne(() => Gender, gender => gender)
     gender: Gender;
-    @ManyToMany(() => Hobby, hobby => hobby.users)
+    @ManyToMany(() => Hobby, hobby => hobby.users,{onDelete:"CASCADE"})
     @JoinTable({name: 'profile_hobbies__hobby_profiles'})
     hobbies: Hobby[];
     @OneToOne(() => Block, block => block.userProfile)
