@@ -165,8 +165,8 @@ export class ProfileService {
             .leftJoinAndSelect('profile.avatar', 'avatar')
             .leftJoinAndSelect('profile.photos', 'photos')
             .andWhere("profile.id != :id",{id:profile.id})
-            .leftJoin("profile.block", "block")
-            .andWhere("block.block  = :block", {block: false})
+           // .leftJoin("profile.block", "block")
+            //.andWhere("block.block  = :block", {block: false})
             .andWhere("profile.genderId != :genderId",{genderId: profile.gender.id})
 
         query.limit(limit);
@@ -195,6 +195,14 @@ export class ProfileService {
                 religionId:data.religion
             });
         }
+        if (data?.region && !data.hobby && data.religion) {
+            console.log("hello")
+            //const ids = data.hobby.split(",")
+            query.andWhere('profile.genderId != :genderId AND profile.religionId = :religionId ', {
+                genderId: profile.gender.id,
+                religionId:data.religion
+            });
+        }
 
         if (data?.category) {
             query.andWhere('category.id = :id ', {id: data.category});
@@ -206,6 +214,7 @@ export class ProfileService {
             });
         }
         if (data?.region && data.hobby && data.religion) {
+            console.log("hello")
             const ids = data.hobby.split(",")
             query.andWhere('hobbies.id IN (:...hobbies) AND profile.regionId = :id AND profile.religionId = :religionId AND profile.genderId != :genderId', {
                 id: data.region,
@@ -261,7 +270,7 @@ export class ProfileService {
         }
         // console.log(profile.gender)
         // console.log(profile.gender.id === 1 ? 2 : 1)
-
+        console.log(query.getSql())
         const profiles = await query.getMany();
         const count = await query.getCount();
         return {profiles, count};
