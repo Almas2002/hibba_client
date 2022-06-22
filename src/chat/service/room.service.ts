@@ -6,6 +6,7 @@ import {Repository} from 'typeorm';
 import {IPagination} from '../../profile/interfaces/get-profile-query.interface';
 import {SemiProfileService} from "./semi-profile.service";
 import {NotificationGatewayService} from "../../notification/service/notification-gateway.service";
+import {Message} from "../model/message.entity";
 
 @Injectable()
 export class RoomService {
@@ -15,12 +16,24 @@ export class RoomService {
     async getRoomsForUser(userId: number) {
         const query = this.roomRepository
             .createQueryBuilder('room')
+
+            .leftJoin("room.messages","messages",).limit(1)
+            // .addSelect((subQuery)=>{
+            //     return subQuery.select("messages.text","text").from(Message,"message").limit(1)
+            // },"text")
+            // .addSelect((subQuery)=>{
+            //     return subQuery.select("messages.createAt","createAt").from(Message,"message").limit(1)
+            // },"createAt")
+            .addSelect("messages").addOrderBy("messages.createAt","DESC").limit(1)
             .leftJoin('room.users', 'users')
             .where('users.id = :userId', {userId})
-            .leftJoinAndSelect('room.users', 'all_users')
+            .leftJoinAndSelect('room.users', 'all_users',).limit(2)
             .leftJoinAndSelect("all_users.profile", "profile")
             .leftJoinAndSelect("profile.avatar", 'avatar')
+            //.subQuery().from(Message,"messages").select("messages.text","text").limit(1)
+
             .orderBy('room.createAt', 'DESC')
+            .addOrderBy("messages.id","DESC")
          return  await query.getMany()
 
 
