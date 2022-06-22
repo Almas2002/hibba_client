@@ -41,7 +41,7 @@ export class ProfileService {
             const images: string[] = [];
             const candidate = await this.profileRepository.findOne({id: data.userId});
             if (candidate) {
-                 throw new BadRequestException('у вас уже есть профиль');
+                 throw new HttpException('у вас уже есть профиль',400);
             }
             const candidateCategory = await this.categoryService.findOne(data.categoryId);
             const candidateRegion = await this.regionService.findOne(data.regionId);
@@ -86,8 +86,9 @@ export class ProfileService {
                     }
 
                 }
+                await this.updateAvatar(data.userId, photo.id)
             }
-            await this.updateAvatar(data.userId, photo.id)
+
             await this.profileRepository.save(profile);
 
     }

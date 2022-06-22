@@ -8,9 +8,9 @@ export class Region {
     id: number;
     @Column()
     value: string
-    @OneToMany(() => Profile, profile => profile)
+    @OneToMany(() => Profile, profile => profile.region,{onDelete:"SET NULL"})
     profiles: Profile[]
 
-    @OneToMany(() => Place, place => place.city)
+    @OneToMany(() => Place, place => place.city,{onDelete:"SET NULL"})
     places: Place[]
 }

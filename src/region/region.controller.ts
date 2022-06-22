@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
 import { RegionService } from './region.service';
-
+import {ApiOperation, ApiProperty, ApiTags} from "@nestjs/swagger";
+@ApiTags('region')
 @Controller('region')
 export class RegionController {
   constructor(private regionService: RegionService) {}
@@ -13,6 +14,11 @@ export class RegionController {
   @Get()
   getAll() {
     return this.regionService.getRegions();
+  }
+  @ApiOperation({summary:"удаление региона"})
+  @Delete(":id")
+  delete(@Param('id')id:number){
+    return this.regionService.delete(id)
   }
 
 }

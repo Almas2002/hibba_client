@@ -18,5 +18,8 @@ export class RegionService {
   async findOne(id:number){
     return await this.regionRepository.findOne(id)
   }
+  async delete(id:number){
+    return await this.regionRepository.delete({id})
+  }
 
 }

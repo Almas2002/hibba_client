@@ -73,7 +73,7 @@ export class Profile extends BaseEntity {
     @OneToMany(() => ProfilePhotos, photo => photo.profile)
     photos: ProfilePhotos[]
 
-    @ManyToOne(() => Region, region => region.profiles)
+    @ManyToOne(() => Region, region => region.profiles,{onDelete:"SET NULL"})
     region: Region
 
     @OneToOne(() => Place, place => place.profile)
