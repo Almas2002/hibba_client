@@ -34,9 +34,11 @@ export class FireBase {
             // },
             "data": {
                 "ttl": "86400s",
-                "data": JSON.stringify(notification)
+                "data": JSON.stringify(notification),
+                "hello":"Aley"
             },
         }
+        console.log(JSON.stringify(notification))
         const data = {
             "message": {
                 "topic": "subscriber-updates",

@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {BadRequestException, HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Profile} from './models/profile.entity';
 import {Repository} from 'typeorm';
@@ -37,11 +37,11 @@ export class ProfileService {
     }
 
     async createProfile(data: CreateProfileDto, file: any[]) {
-        try {
+
             const images: string[] = [];
             const candidate = await this.profileRepository.findOne({id: data.userId});
             if (candidate) {
-                throw new HttpException('у вас уже есть профиль', 400);
+                 throw new BadRequestException('у вас уже есть профиль');
             }
             const candidateCategory = await this.categoryService.findOne(data.categoryId);
             const candidateRegion = await this.regionService.findOne(data.regionId);
@@ -49,7 +49,7 @@ export class ProfileService {
             const candidateGender = await this.genderService.findOne(data.genderId);
 
             if (!candidateCategory || !candidateGender || !candidateRegion || !candidateReligion) {
-                throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
+                  throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
             }
             const profile = await this.profileRepository.save({
                 ...data,
@@ -89,9 +89,7 @@ export class ProfileService {
             }
             await this.updateAvatar(data.userId, photo.id)
             await this.profileRepository.save(profile);
-        } catch (e) {
-            console.log(e)
-        }
+
     }
 
     async getUserProfile(userId: number) {
