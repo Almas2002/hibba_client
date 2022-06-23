@@ -86,6 +86,9 @@ export class UserService {
         const query = this.userVisitRepository.createQueryBuilder("visit")
             .select("SUM(visit.amount) ", "amount")
             .andWhere("visit.date >= :dateFrom AND visit.date <= :dateTo", {dateFrom: dto.dateFrom, dateTo: dto.dateTo})
+        if(dto.userId){
+            query.andWhere("visit.userId = :id",{id:dto.userId})
+        }
         const a = await query.getRawOne()
         return a.amount
     }

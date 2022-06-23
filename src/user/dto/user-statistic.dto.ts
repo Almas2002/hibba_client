@@ -5,4 +5,6 @@ export class UserStatisticDto{
     dateFrom:Date
     @ApiProperty()
     dateTo:Date
+    @ApiProperty()
+    userId?:number
 }
