@@ -25,6 +25,10 @@ export class HadisService {
     }
     async getCategories(){
         const query = this.hadisCategory.createQueryBuilder("category")
+            .select("category.id","id")
+            .addSelect("category.title","title")
+            .addSelect("category.arabic","arabic")
+            .addSelect("category.translate","translate")
             .leftJoin("category.hadises","hadises")
             .addSelect("COUNT(hadises.id)","count")
             .groupBy("category.id")
