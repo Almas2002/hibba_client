@@ -24,7 +24,11 @@ export class HadisService {
         })
     }
     async getCategories(){
-        return await this.hadisCategory.find()
+        const query = this.hadisCategory.createQueryBuilder("category")
+            .leftJoin("category.hadises","hadises")
+            .addSelect("COUNT(hadises.id)","count")
+            .groupBy("category.id")
+        return await query.getRawMany()
     }
     async getHadis(id:number){
         const query = this.hadis.createQueryBuilder("hadis")
