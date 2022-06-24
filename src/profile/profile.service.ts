@@ -98,7 +98,7 @@ export class ProfileService {
         return await this.profileRepository.findOne({
             where: {user: {id: userId}},
             relations: ['hobbies', 'category', 'gender', 'myLikes',
-                'religion', 'photos', 'avatar', 'region', 'user',],
+                'religion', 'photos', 'avatar', 'region', 'user','block'],
         });
     }
 
