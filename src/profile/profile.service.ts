@@ -325,10 +325,7 @@ export class ProfileService {
         const profile = await this.profileRepository.findOne({id});
         const workerProfile = await this.profileRepository.findOne({where: {user: {id: workerId}}})
         const block = await this.blockRepository.findOne({where: {userProfile: profile}})
-        if (block.block) {
-            throw new HttpException("этот пользольватель уже заблокирован", 400)
-        }
-        block.block = true
+        block.block =  !block.block
         block.text = text
         block.workerProfile = workerProfile
         await this.blockRepository.save(block)
