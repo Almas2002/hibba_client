@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, UseGuards} from '@nestjs/common';
 import { UserService } from './user.service';
 import {ApiOperation} from "@nestjs/swagger";
 import {UserStatisticDto} from "./dto/user-statistic.dto";
@@ -16,7 +16,7 @@ export class UserController {
   }
 
   @ApiOperation({summary:"статистика"})
-  @Get('statistic')
+  @Post('statistic')
   statistic(@Body()dto:UserStatisticDto){
     return this.userService.getStatistic(dto)
   }

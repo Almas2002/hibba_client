@@ -8,8 +8,6 @@ import {IPagination} from "../profile/interfaces/get-profile-query.interface";
 import {RoleGuards} from "../auth/guard/role.guard";
 import {Role} from "../user/decorators/role.decorator";
 import {RoleEnums} from "../enums/role.enums";
-import {ComplainStatus} from "./complaint.entity";
-import {createEvalAwarePartialHost} from "ts-node/dist/repl";
 import {UpdateComplaintStatusDto} from "./dto/updateComplaintStatus.dto";
 
 @ApiTags('complaint')
@@ -46,6 +44,4 @@ export class ComplaintController {
     changeStatus(@Param('id')id: number, @Body()status: UpdateComplaintStatusDto) {
         return this.complaintService.changeStatus(id, status.status)
     }
-
-
 }
