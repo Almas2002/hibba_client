@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
-
-
 import { AuthMiddleware } from './middleware/auth.milddleaware';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';

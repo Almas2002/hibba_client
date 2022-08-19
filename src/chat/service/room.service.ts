@@ -7,24 +7,29 @@ import {IPagination} from '../../profile/interfaces/get-profile-query.interface'
 import {SemiProfileService} from "./semi-profile.service";
 import {NotificationGatewayService} from "../../notification/service/notification-gateway.service";
 import {Message} from "../model/message.entity";
+import {GenerateTokenDto} from "../dto/generate-token.dto";
+import {RtcTokenBuilder, RtcRole, RtmTokenBuilder, RtmRole} from 'agora-access-token'
+import {AgoraChannel} from "../model/agora-channel.entity";
+import {CreateChatDto} from "../dto/create-chat.dto";
 
 @Injectable()
 export class RoomService {
-    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService, @Inject(forwardRef(() => NotificationGatewayService)) private notification: NotificationGatewayService) {
+    constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService, @Inject(forwardRef(() => NotificationGatewayService)) private notification: NotificationGatewayService
+    ,@InjectRepository(AgoraChannel)private channelRepository:Repository<AgoraChannel>) {
     }
 
     async getRoomsForUser(userId: number) {
         const query = this.roomRepository
             .createQueryBuilder('room')
 
-            .leftJoin("room.messages","messages",).limit(1)
+            .leftJoin("room.messages", "messages",).limit(1)
             // .addSelect((subQuery)=>{
             //     return subQuery.select("messages.text","text").from(Message,"message").limit(1)
             // },"text")
             // .addSelect((subQuery)=>{
             //     return subQuery.select("messages.createAt","createAt").from(Message,"message").limit(1)
             // },"createAt")
-            .addSelect("messages").addOrderBy("messages.createAt","DESC").limit(1)
+            .addSelect("messages").addOrderBy("messages.createAt", "DESC").limit(1)
             .leftJoin('room.users', 'users')
             .where('users.id = :userId', {userId})
             .leftJoinAndSelect('room.users', 'all_users',).limit(2)
@@ -33,19 +38,19 @@ export class RoomService {
             //.subQuery().from(Message,"messages").select("messages.text","text").limit(1)
 
             .orderBy('room.createAt', 'DESC')
-            .addOrderBy("messages.id","DESC")
-         return  await query.getMany()
+            .addOrderBy("messages.id", "DESC")
+        return await query.getMany()
 
 
     }
 
-    async createRoom(creator: User, userId: number) {
-        const profile = await this.profileService.getUserByProfileId(userId)
+    async createRoom(creator: User, dto: CreateChatDto) {
+        const profile = await this.profileService.getUserByProfileId(dto.profileId)
         if (!profile) {
             throw new HttpException("профиль не найден", 404)
         }
         const creatorProfile = await this.profileService.getUserProfile(creator.id)
-        let combination = creator.id + userId
+        let combination = creator.id + dto.profileId
         // const candidate = await this.roomRepository.findOne({where:{combination},relations:["users","users.profile"]})
         const query = this.roomRepository.createQueryBuilder("room")
             .leftJoinAndSelect("room.users", "users")
@@ -63,12 +68,45 @@ export class RoomService {
         const r2 = await this.roomRepository.findOne({where: {id: room.id}, relations: ["users", "users.profile"]})
         for (const user of r2.users) {
             if (creator.id != user.id)
-                await this.notification.roomNotification(`вам хочет написать ${creatorProfile?.firstName}`,room,profile.user)
+                await this.notification.roomNotification(`вам хочет написать ${creatorProfile?.firstName}`, room, profile.user)
         }
+        const token = await this.generateToken({uuid:dto.uuid,role:dto.role,channelName:`${r2.id}`})
+            await this.channelRepository.save({room:r2,token:token.rtcToken})
         return r2
     }
 
     async getRoom(id: number): Promise<Room> {
         return await this.roomRepository.findOne({id}, {relations: ["joinedUsers", "joinedUsers.user", "users"]});
+    }
+
+    async generateToken(dto: GenerateTokenDto) {
+        if (!dto.channelName) {
+            throw new HttpException("channel name is required ", 422)
+        }
+        let role = RtcRole.SUBSCRIBER
+        if (dto.role === 'publisher') {
+            role = RtcRole.PUBLISHER
+        }
+
+        // if(!dto.uuid){
+        //     throw new HttpException("uuid is required ", 422)
+        // }
+
+        let expireTime = 60 * 60 * 24 * 30 * 12
+
+        const currentTime = Math.floor(Date.now() / 1000);
+        const privilegeExpireTime = currentTime + expireTime;
+
+        const rtcToken = await RtcTokenBuilder.buildTokenWithUid(process.env.AGORA_APP_ID, process.env.AGORA_APP_CERTIFICATE, dto.channelName, dto.uuid, role, privilegeExpireTime);
+        // const rtmToken =  await  RtmTokenBuilder.buildToken(process.env.AGORA_APP_ID,process.env.AGORA_APP_CERTIFICATE, "fdss", role, privilegeExpireTime);
+        // console.log(rtmToken)
+        return {rtcToken}
+    }
+    async call(user:User,type:number,firstName:string){
+        let typeOfCall = 'аудиозвоноку'
+        if (type === 1){
+            typeOfCall  = 'видеозвонку'
+        }
+        await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`,user)
     }
 }
