@@ -9,7 +9,8 @@ export enum NotificationType {
     NOTIFICATION = "NOTIFICATION",
     MESSAGE = "MESSAGE",
     ROOM = "ROOM",
-    CALL = "CALL"
+    CALL = "CALL",
+    ENDCALL = "ENDCALL"
 }
 
 @Entity()

@@ -12,6 +12,7 @@ import {JoinedRoomService} from '../service/joined-room.service';
 import {CreateChatDto} from "../dto/create-chat.dto";
 import {GenerateTokenDto} from "../dto/generate-token.dto";
 import {CreateCallDto} from "../dto/create-call.dto";
+import {EndCallDto} from "../dto/end-call.dto";
 
 @ApiTags('чат')
 @Controller('chat')
@@ -64,7 +65,16 @@ export class ChatController {
     @ApiOperation({summary: 'увидомление для звонка'})
     @UseGuards(AuthGuard)
     @Post('call')
-    call(@Body()body: CreateCallDto, @UserDecorator()user: User) {
-        return this.roomService.call(user, body.type, body.firstName)
+    call(@Body()body: CreateCallDto, ) {
+        return this.roomService.call(body.userId, body.type, body.firstName)
     }
+
+    @ApiOperation({summary: 'увидомление для завершение звонка'})
+    @UseGuards(AuthGuard)
+    @Post('end-call')
+    endCall(@Body()body: EndCallDto, ) {
+        return this.roomService.endCall(body)
+    }
+
+
 }

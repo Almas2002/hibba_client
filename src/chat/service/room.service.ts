@@ -3,19 +3,19 @@ import {User} from '../../user/user.entity';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Room} from '../model/room.entity';
 import {Repository} from 'typeorm';
-import {IPagination} from '../../profile/interfaces/get-profile-query.interface';
 import {SemiProfileService} from "./semi-profile.service";
 import {NotificationGatewayService} from "../../notification/service/notification-gateway.service";
-import {Message} from "../model/message.entity";
 import {GenerateTokenDto} from "../dto/generate-token.dto";
-import {RtcTokenBuilder, RtcRole, RtmTokenBuilder, RtmRole} from 'agora-access-token'
+import {RtcRole, RtcTokenBuilder} from 'agora-access-token'
 import {AgoraChannel} from "../model/agora-channel.entity";
 import {CreateChatDto} from "../dto/create-chat.dto";
+import {EndCallDto} from "../dto/end-call.dto";
+import {NotificationType} from "../../notification/notification.entity";
 
 @Injectable()
 export class RoomService {
     constructor(@InjectRepository(Room) private roomRepository: Repository<Room>, private profileService: SemiProfileService, @Inject(forwardRef(() => NotificationGatewayService)) private notification: NotificationGatewayService
-    ,@InjectRepository(AgoraChannel)private channelRepository:Repository<AgoraChannel>) {
+        , @InjectRepository(AgoraChannel) private channelRepository: Repository<AgoraChannel>) {
     }
 
     async getRoomsForUser(userId: number) {
@@ -70,13 +70,13 @@ export class RoomService {
             if (creator.id != user.id)
                 await this.notification.roomNotification(`вам хочет написать ${creatorProfile?.firstName}`, room, profile.user)
         }
-        const token = await this.generateToken({uuid:dto.uuid,role:dto.role,channelName:`${r2.id}`})
-            await this.channelRepository.save({room:r2,token:token.rtcToken})
+        const token = await this.generateToken({uuid: dto.uuid, role: dto.role, channelName: `${r2.id}`})
+        await this.channelRepository.save({room: r2, token: token.rtcToken})
         return r2
     }
 
     async getRoom(id: number): Promise<Room> {
-        return await this.roomRepository.findOne({id}, {relations: ["joinedUsers", "joinedUsers.user", "users"]});
+        return await this.roomRepository.findOne({id}, {relations: ["joinedUsers", "joinedUsers.user", "users", ""]});
     }
 
     async generateToken(dto: GenerateTokenDto) {
@@ -102,11 +102,16 @@ export class RoomService {
         // console.log(rtmToken)
         return {rtcToken}
     }
-    async call(user:User,type:number,firstName:string){
+
+    async call(userId: number, type: number, firstName: string) {
         let typeOfCall = 'аудиозвоноку'
-        if (type === 1){
-            typeOfCall  = 'видеозвонку'
+        if (type === 1) {
+            typeOfCall = 'видеозвонку'
         }
-        await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`,user)
+        await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`, userId)
+    }
+
+    async endCall(dto: EndCallDto) {
+        await this.notification.callNotification(`вам откнонил звонок: ${dto.firstName}`, dto.userId, NotificationType.ENDCALL)
     }
 }
