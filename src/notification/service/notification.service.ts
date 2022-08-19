@@ -25,7 +25,7 @@ export class NotificationService {
     }
 
     async createMessageNotification(text: string, message: Message, id: number) {
-        return await this.notificationRepository.save({text, user: {id}, message, type: NotificationType.MESSAGE})
+        return await this.notificationRepository.save({text, user: {id}, message, type: NotificationType.MESSAGE});
     }
     async createRoomNotification(text: string, room: Room, id: number){
         return await this.notificationRepository.save({text, user: {id}, room, type: NotificationType.ROOM})
