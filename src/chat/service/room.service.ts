@@ -35,7 +35,7 @@ export class RoomService {
             .leftJoinAndSelect('room.users', 'all_users',).limit(2)
             .leftJoinAndSelect("all_users.profile", "profile")
             .leftJoinAndSelect("profile.avatar", 'avatar')
-            .leftJoinAndSelect("user.channel","channel")
+            .leftJoinAndSelect("room.channel","channel")
             //.subQuery().from(Message,"messages").select("messages.text","text").limit(1)
 
             .orderBy('room.createAt', 'DESC')
