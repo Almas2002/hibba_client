@@ -110,7 +110,7 @@ export class RoomService {
         if (type === 1) {
             typeOfCall = 'видеозвонку'
         }
-        await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`, userId)
+        await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`, userId,NotificationType.CALL)
     }
 
     async endCall(dto: EndCallDto) {
