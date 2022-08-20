@@ -66,13 +66,14 @@ export class RoomService {
         const room = await this.roomRepository.save({combination});
         room.users = [creator, profile.user];
         await this.roomRepository.save(room);
-        const r2 = await this.roomRepository.findOne({where: {id: room.id}, relations: ["users", "users.profile"]})
+        const token = await this.generateToken({uuid: dto.uuid, role: dto.role, channelName: `${room.id}`})
+        await this.channelRepository.save({room, token: token.rtcToken})
+        const r2 = await this.roomRepository.findOne({where: {id: room.id}, relations: ["users", "users.profile","channel"]})
         for (const user of r2.users) {
             if (creator.id != user.id)
                 await this.notification.roomNotification(`вам хочет написать ${creatorProfile?.firstName}`, room, profile.user)
         }
-        const token = await this.generateToken({uuid: dto.uuid, role: dto.role, channelName: `${r2.id}`})
-        await this.channelRepository.save({room: r2, token: token.rtcToken})
+
         return r2
     }
 
