@@ -35,6 +35,7 @@ export class RoomService {
             .leftJoinAndSelect('room.users', 'all_users',).limit(2)
             .leftJoinAndSelect("all_users.profile", "profile")
             .leftJoinAndSelect("profile.avatar", 'avatar')
+            .leftJoinAndSelect("user.channel","channel")
             //.subQuery().from(Message,"messages").select("messages.text","text").limit(1)
 
             .orderBy('room.createAt', 'DESC')
@@ -76,7 +77,7 @@ export class RoomService {
     }
 
     async getRoom(id: number): Promise<Room> {
-        return await this.roomRepository.findOne({id}, {relations: ["joinedUsers", "joinedUsers.user", "users", ""]});
+        return await this.roomRepository.findOne({id}, {relations: ["joinedUsers", "joinedUsers.user", "users", "channel"]});
     }
 
     async generateToken(dto: GenerateTokenDto) {
