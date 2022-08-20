@@ -19,6 +19,10 @@ export class NotificationService {
         return await this.notificationRepository.save({text, user: {id}, type});
 
     }
+    async createNotificationForOneUserCall(text: string, id: number, type: NotificationType,room:Room) {
+        return await this.notificationRepository.save({text, user: {id}, type});
+
+    }
 
     async createLikeNotification(text: string, id: number, like: Like) {
         return await this.notificationRepository.save({text, user: {id}, like, type: NotificationType.LIKE})

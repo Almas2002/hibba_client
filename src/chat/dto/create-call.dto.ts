@@ -7,4 +7,6 @@ export class CreateCallDto{
     type:number
     @ApiProperty({example: "1", description: "id которому надо позвонить"})
     userId:number
+    @ApiProperty({example: "1", description: "id комнаты"})
+    roomId:number
 }

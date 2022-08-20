@@ -66,7 +66,7 @@ export class ChatController {
     @UseGuards(AuthGuard)
     @Post('call')
     call(@Body()body: CreateCallDto, ) {
-        return this.roomService.call(body.userId, body.type, body.firstName)
+        return this.roomService.call(body.userId, body.type, body.firstName,body.roomId)
     }
 
     @ApiOperation({summary: 'увидомление для завершение звонка'})

@@ -11,6 +11,7 @@ import {AgoraChannel} from "../model/agora-channel.entity";
 import {CreateChatDto} from "../dto/create-chat.dto";
 import {EndCallDto} from "../dto/end-call.dto";
 import {NotificationType} from "../../notification/notification.entity";
+import {createEvalAwarePartialHost} from "ts-node/dist/repl";
 
 @Injectable()
 export class RoomService {
@@ -66,6 +67,9 @@ export class RoomService {
         const room = await this.roomRepository.save({combination});
         room.users = [creator, profile.user];
         await this.roomRepository.save(room);
+        if (!dto.uuid){
+            dto.uuid = room.id
+        }
         const token = await this.generateToken({uuid: dto.uuid, role: dto.role, channelName: `${room.id}`})
         await this.channelRepository.save({room, token: token.rtcToken})
         const r2 = await this.roomRepository.findOne({where: {id: room.id}, relations: ["users", "users.profile","channel"]})
@@ -104,16 +108,21 @@ export class RoomService {
         // console.log(rtmToken)
         return {rtcToken}
     }
+    private async findRoomWithChanel(id:number){
+        return await this.roomRepository.findOne({where:{id},relations:["channel"]})
+    }
 
-    async call(userId: number, type: number, firstName: string) {
+    async call(userId: number, type: number, firstName: string,roomId:number) {
         let typeOfCall = 'аудиозвоноку'
         if (type === 1) {
             typeOfCall = 'видеозвонку'
         }
-        await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`, userId,NotificationType.CALL)
+        const room = await this.findRoomWithChanel(roomId)
+        await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`, userId,room,NotificationType.CALL,)
     }
 
     async endCall(dto: EndCallDto) {
-        await this.notification.callNotification(`вам откнонил звонок: ${dto.firstName}`, dto.userId, NotificationType.ENDCALL)
+        const room = await this.findRoomWithChanel(dto.roomId)
+        await this.notification.callNotification(`вам откнонил звонок: ${dto.firstName}`, dto.userId,room, NotificationType.ENDCALL)
     }
 }

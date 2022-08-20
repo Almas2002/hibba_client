@@ -41,10 +41,10 @@ export class NotificationGatewayService {
     const notification = await this.notificationService.createRoomNotification(message,room,userTo.id)
     await this.defaultNotificationOne(notification,userTo)
   }
-  async callNotification(message:string,userId:number,type:NotificationType = NotificationType.CALL){
+  async callNotification(message:string,userId:number,room:Room,type:NotificationType = NotificationType.CALL){
     const users = await this.connectedUserService.findAllUser();
     const candidate = users.filter(u=>u.user.id === userId)
-    const notification = await this.notificationService.createNotificationForOneUser(message, userId,type);
+    const notification = await this.notificationService.createNotificationForOneUserCall(message, userId,type,room);
     if (candidate){
       this.notificationGateway.sendToUser(users[0].socketId, notification);
     }
