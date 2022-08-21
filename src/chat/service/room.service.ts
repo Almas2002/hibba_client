@@ -41,6 +41,8 @@ export class RoomService {
 
             .orderBy('room.createAt', 'DESC')
             .addOrderBy("messages.id", "DESC")
+        query.limit(999)
+
         return await query.getMany()
 
 
