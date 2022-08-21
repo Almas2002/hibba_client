@@ -109,7 +109,7 @@ export class RoomService {
         return {rtcToken}
     }
     private async findRoomWithChanel(id:number){
-        return await this.roomRepository.findOne({where:{id},relations:["channel"]})
+        return await this.roomRepository.findOne({where:{id},relations:["channel","users"]})
     }
 
     async call(userId: number, type: number, firstName: string,roomId:number) {

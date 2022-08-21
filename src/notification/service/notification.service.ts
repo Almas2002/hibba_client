@@ -19,7 +19,8 @@ export class NotificationService {
         return await this.notificationRepository.save({text, user: {id}, type});
 
     }
-    async createNotificationForOneUserCall(text: string, id: number, type: NotificationType,room:Room) {
+
+    async createNotificationForOneUserCall(text: string, id: number, type: NotificationType, room: Room) {
         return await this.notificationRepository.save({text, user: {id}, type});
 
     }
@@ -31,7 +32,8 @@ export class NotificationService {
     async createMessageNotification(text: string, message: Message, id: number) {
         return await this.notificationRepository.save({text, user: {id}, message, type: NotificationType.MESSAGE});
     }
-    async createRoomNotification(text: string, room: Room, id: number){
+
+    async createRoomNotification(text: string, room: Room, id: number) {
         return await this.notificationRepository.save({text, user: {id}, room, type: NotificationType.ROOM})
     }
 }
