@@ -70,7 +70,7 @@ export class RoomService {
         room.users = [creator, profile.user];
         await this.roomRepository.save(room);
         if (!dto.uuid){
-            dto.uuid = room.id
+            dto.uuid = 0
         }
         const token = await this.generateToken({uuid: dto.uuid, role: dto.role, channelName: `${room.id}`})
         const channel =  await this.channelRepository.save({room, token: token.rtcToken})
