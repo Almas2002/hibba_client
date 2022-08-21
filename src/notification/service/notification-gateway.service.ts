@@ -45,6 +45,7 @@ export class NotificationGatewayService {
     const users = await this.connectedUserService.findAllUser();
     const candidate = users.filter(u=>u.user.id === userId)
     const notification = await this.notificationService.createNotificationForOneUserCall(message, userId,type,room);
+    notification.room = room
     if (candidate){
       this.notificationGateway.sendToUser(users[0].socketId, notification);
     }
