@@ -118,11 +118,17 @@ export class RoomService {
             typeOfCall = 'видеозвонку'
         }
         const room = await this.findRoomWithChanel(roomId)
+        if (!room){
+            throw new HttpException("такой комнаты не сущуствует",404)
+        }
         await this.notification.callNotification(`вам звонит по ${typeOfCall}: ${firstName}`, userId,room,NotificationType.CALL,)
     }
 
     async endCall(dto: EndCallDto) {
         const room = await this.findRoomWithChanel(dto.roomId)
+        if (!room){
+            throw new HttpException("такой комнаты не сущуствует",404)
+        }
         await this.notification.callNotification(`вам откнонил звонок: ${dto.firstName}`, dto.userId,room, NotificationType.ENDCALL)
     }
 }

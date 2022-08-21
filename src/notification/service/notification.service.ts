@@ -20,7 +20,7 @@ export class NotificationService {
 
     }
     async createNotificationForOneUserCall(text: string, id: number, type: NotificationType,room:Room) {
-        return await this.notificationRepository.save({text, user: {id}, type});
+        return await this.notificationRepository.save({text, user: {id}, type,room});
 
     }
 
