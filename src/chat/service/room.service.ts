@@ -90,7 +90,8 @@ export class RoomService {
             dto.uuid = 0
         }
         const token = await this.generateToken({uuid: dto.uuid, role: dto.role, channelName: `${room.id}`})
-        const channel =  await this.channelRepository.save({room, token: token.rtcToken})
+        const deadline = moment().add('hours', 23)
+        const channel =  await this.channelRepository.save({room, token: token.rtcToken,deadline})
         const r2 = await this.roomRepository.findOne({where: {id: room.id}, relations: ["users", "users.profile","channel"]})
         for (const user of r2.users) {
             if (creator.id != user.id)
