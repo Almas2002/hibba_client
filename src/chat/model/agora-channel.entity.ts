@@ -10,4 +10,7 @@ export class AgoraChannel {
     @OneToOne(()=>Room,room=>room)
     @JoinColumn()
     room: Room
+
+    @Column({type: "date", nullable: true})
+    deadline:Date
 }
