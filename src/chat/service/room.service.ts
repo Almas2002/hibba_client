@@ -26,13 +26,14 @@ export class RoomService {
             .orWhere("channel.deadline < :date",{date:new Date(date.format('YYYY MM DD'))})
             .orWhere("channel.deadline IS NULL")
          const ch = await channels.getMany()
-
+        console.log(ch)
         if (ch.length){
             let channel
             const deadline = moment().add('hours', 23)
             for (let i = 0;i < ch.length; i++){
                 channel = await this.channelRepository.findOne({where:{id:ch[i].id}})
-                channel.token = await this.generateToken({channelName:`${ch[i].room.id}`,role:"publisher",uuid:0})
+                const t = await this.generateToken({channelName:`${ch[i].room.id}`,role:"publisher",uuid:0})
+                channel.token = t.rtcToken
                 channel.deadline = deadline
                 await this.channelRepository.save(channel)
             }
