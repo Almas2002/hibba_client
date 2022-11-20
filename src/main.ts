@@ -25,7 +25,7 @@ async function bootstrap() {
   app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
   const documentation = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/docs', app, documentation);
-
+  app.useGlobalPipes(new MyValidationPipe());
   await app.listen(3000);
 }
 bootstrap();

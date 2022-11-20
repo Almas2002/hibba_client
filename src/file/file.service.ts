@@ -36,7 +36,7 @@ export class FileService {
           }
     };
     try {
-      let s3Response = await this.s3.upload(params).promise()
+     await this.s3.upload(params).promise()
     }catch (e) {
       console.log(e)
     }

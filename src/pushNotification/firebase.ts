@@ -39,32 +39,7 @@ export class FireBase {
             },
         }
         console.log(JSON.stringify(notification))
-        const data = {
-            "message": {
-                "topic": "subscriber-updates",
-                "notification": {
-                    "body": "This week's edition is now available.",
-                    "title": "NewsMagazine.com",
-                },
-                "data": {
-                    "volume": "3.21.15",
-                    "contents": "http://www.news-magazine.com/world-week/21659772"
-                },
-                "android": {
-                    "priority": "normal"
-                },
-                "apns": {
-                    "headers": {
-                        "apns-priority": "5"
-                    }
-                },
-                "webpush": {
-                    "headers": {
-                        "Urgency": "high"
-                    }
-                }
-            }
-        }
+
 
         return await admin.messaging().sendToDevice(token, payload)
     }

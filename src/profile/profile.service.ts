@@ -24,6 +24,8 @@ import {Place} from "./models/place.entity";
 import {Block} from "./models/block.entity";
 import {ProfileListDto} from "./dto/profile-list.dto";
 import {UpdateWorkerDto} from "./dto/update-worker.dto";
+import {ProfileNotFoundException} from "./exception/profile.exception";
+import {Posts} from "../posts/entity/posts.entity";
 
 @Injectable()
 export class ProfileService {
@@ -38,58 +40,58 @@ export class ProfileService {
 
     async createProfile(data: CreateProfileDto, file: any[]) {
 
-            const images: string[] = [];
-            const candidate = await this.profileRepository.findOne({id: data.userId});
-            if (candidate) {
-                 throw new HttpException('у вас уже есть профиль',400);
-            }
-            const candidateCategory = await this.categoryService.findOne(data.categoryId);
-            const candidateRegion = await this.regionService.findOne(data.regionId);
-            const candidateReligion = await this.religionService.findOne(data.religionId);
-            const candidateGender = await this.genderService.findOne(data.genderId);
+        const images: string[] = [];
+        const candidate = await this.profileRepository.findOne({id: data.userId});
+        if (candidate) {
+            throw new HttpException('у вас уже есть профиль', 400);
+        }
+        const candidateCategory = await this.categoryService.findOne(data.categoryId);
+        const candidateRegion = await this.regionService.findOne(data.regionId);
+        const candidateReligion = await this.religionService.findOne(data.religionId);
+        const candidateGender = await this.genderService.findOne(data.genderId);
 
-            if (!candidateCategory || !candidateGender || !candidateRegion || !candidateReligion) {
-                  throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
+        if (!candidateCategory || !candidateGender || !candidateRegion || !candidateReligion) {
+            throw new HttpException('вы не правильно дали парметры,может быть не правильно дан категория,регион,гендер или религия', 400);
+        }
+        const profile = await this.profileRepository.save({
+            ...data,
+            user: {id: data.userId},
+            region: {id: data.regionId},
+            gender: {id: data.genderId},
+            category: {id: data.categoryId},
+            religion: {id: data.religionId},
+        });
+        await this.blockRepository.save({userProfile: profile})
+        if (file?.length) {
+            for (const f of file) {
+                images.push(await this.fileService.createFile(f));
             }
-            const profile = await this.profileRepository.save({
-                ...data,
-                user: {id: data.userId},
-                region: {id: data.regionId},
-                gender: {id: data.genderId},
-                category: {id: data.categoryId},
-                religion: {id: data.religionId},
-            });
-            await this.blockRepository.save({userProfile: profile})
-            if (file?.length) {
-                for (const f of file) {
-                    images.push(await this.fileService.createFile(f));
+        }
+        let hobby;
+        profile.hobbies = [];
+        if (data.hobby?.length) {
+            const len = data.hobby.split(',')
+            for (const h of len) {
+                hobby = await this.hobbyService.getOneHobby(+h);
+                if (hobby) {
+                    profile.hobbies.push(hobby);
                 }
             }
-            let hobby;
-            profile.hobbies = [];
-            if (data.hobby?.length) {
-                const len = data.hobby.split(',')
-                for (const h of len) {
-                    hobby = await this.hobbyService.getOneHobby(+h);
-                    if (hobby) {
-                        profile.hobbies.push(hobby);
-                    }
+        }
+        let photo;
+        if (file?.length) {
+            for (let i = 0; i < images.length; i++) {
+                if (i == 0) {
+                    photo = await this.profilePhotosRepository.save({image: images[i], profile});
+                } else {
+                    await this.profilePhotosRepository.save({image: images[i], profile});
                 }
-            }
-            let photo;
-            if (file?.length) {
-                for (let i = 0; i < images.length; i++) {
-                    if (i == 0) {
-                        photo = await this.profilePhotosRepository.save({image: images[i], profile});
-                    } else {
-                        await this.profilePhotosRepository.save({image: images[i], profile});
-                    }
 
-                }
-                await this.updateAvatar(data.userId, photo.id)
             }
+            await this.updateAvatar(data.userId, photo.id)
+        }
 
-            await this.profileRepository.save(profile);
+        await this.profileRepository.save(profile);
 
     }
 
@@ -98,8 +100,18 @@ export class ProfileService {
         return await this.profileRepository.findOne({
             where: {user: {id: userId}},
             relations: ['hobbies', 'category', 'gender', 'myLikes',
-                'religion', 'photos', 'avatar', 'region', 'user','block'],
+                'religion', 'photos', 'avatar', 'region', 'user', 'block'],
         });
+    }
+    async createImagePost(post:Posts,image:string){
+        await this.profilePhotosRepository.save({post,image})
+    }
+    async getProfileByUserId(id: number) {
+        const profile = await this.profileRepository.findOne({where: {user: {id}}})
+        if (!profile) {
+            throw new ProfileNotFoundException()
+        }
+        return profile
     }
 
     async getLikes(id: number) {
@@ -163,113 +175,48 @@ export class ProfileService {
             .leftJoinAndSelect('profile.region', 'region')
             .leftJoinAndSelect('profile.avatar', 'avatar')
             .leftJoinAndSelect('profile.photos', 'photos')
-            .andWhere("profile.id != :id",{id:profile.id})
-           // .leftJoin("profile.block", "block")
-            //.andWhere("block.block  = :block", {block: false})
-            .andWhere("profile.genderId != :genderId",{genderId: profile.gender.id})
+            .andWhere("profile.id != :id", {id: profile.id})
+            .andWhere("profile.genderId != :genderId", {genderId: profile.gender.id})
 
         query.limit(limit);
         query.offset(offset);
 
-        if (!data?.region && data.hobby && !data.religion) {
+        if (data.hobby) {
             const ids = data.hobby.split(",")
-            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId', {
+            query.andWhere('hobbies.id IN (:...hobbies)', {
                 hobbies: ids,
-                genderId: profile.gender.id
             });
         }
-        if (data?.region && data.hobby && !data.religion) {
-            const ids = data.hobby.split(",")
-            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId AND profile.regionId = :regionId', {
-                hobbies: ids,
-                genderId: profile.gender.id,
-                regionId:data.region
-            });
+        if (data?.region) {
+            query.andWhere('profile.regionId = :regionId', {regionId: data.region});
         }
-        if (!data?.region && data.hobby && data.religion) {
-            const ids = data.hobby.split(",")
-            query.andWhere('hobbies.id IN (:...hobbies) AND profile.genderId != :genderId AND profile.religionId = :religionId ', {
-                hobbies: ids,
-                genderId: profile.gender.id,
-                religionId:data.religion
-            });
-        }
-        if (data?.region && !data.hobby && data.religion) {
-            console.log("hello")
-            //const ids = data.hobby.split(",")
-            query.andWhere('profile.genderId != :genderId AND profile.religionId = :religionId ', {
-                genderId: profile.gender.id,
-                religionId:data.religion
-            });
+        if (data.religion) {
+            query.andWhere('profile.religionId = :religionId ', {religionId: data.religion});
         }
 
         if (data?.category) {
-            query.andWhere('category.id = :id ', {id: data.category});
+            console.log(`here`)
+            query.andWhere('profile.categoryId = :categoryId ', {categoryId: data.category});
         }
-        if (data?.region && !data.hobby && !data.religion) {
-            query.andWhere('profile.regionId = :id AND profile.genderId != :genderId', {
-                id: data.region,
-                genderId: profile.gender.id
-            });
+        if (data.ageTo) {
+            query.andWhere('profile.age <= :ageTo ', {ageTo: data.ageTo,});
         }
-        if (data?.region && data.hobby && data.religion) {
-            console.log("hello")
-            const ids = data.hobby.split(",")
-            query.andWhere('hobbies.id IN (:...hobbies) AND profile.regionId = :id AND profile.religionId = :religionId AND profile.genderId != :genderId', {
-                id: data.region,
-                religionId: data.religion,
-                genderId: profile.gender.id,
-                hobbies:ids
-            });
-        }
-
-        if (!data?.region && !data.hobby && data.religion) {
-            query.andWhere('profile.religionId = :id AND profile.genderId != :genderId', {
-                id: data.religion,
-                genderId: profile.gender.id
-            });
-        }
-        if (!data?.ageFrom && data.ageTo) {
-            query.andWhere('profile.age <= :age AND profile.genderId != :genderId ', {
-                age: data.ageTo,
-                genderId: profile.gender.id
-            });
-        }
-        if (data?.ageFrom && !data.ageTo) {
-            query.andWhere('profile.age >= :age AND profile.genderId != :genderId ', {
-                age: data.ageFrom,
-                genderId: profile.gender.id
-            });
+        if (data?.ageFrom) {
+            query.andWhere('profile.age >= :ageFrom', {ageFrom: data.ageFrom,});
         }
         if (data?.block) {
             query.andWhere('profile.block = :block', {block: data.block});
         }
-        if (data?.ageFrom && data?.ageTo) {
-            query.andWhere('profile.age >= :price2 AND profile.age <= :price AND profile.genderId != :genderId', {
-                price: data.ageTo,
-                price2: data.ageFrom
-                , genderId: profile.gender.id
-            });
-        }
         if (data?.search) {
-            query.andWhere('profile.firstName ILIKE :firstName OR profile.secondName ILIKE :secondName', {
-                firstName: `%${data.search}%`,
-                secondName: `%${data.search}%`,
-            })
-            // .andWhere('profile.userId <> :userId', { userId: data.userId })
-            // .andWhere('profile.block = :block', {block: false});
-            //.andWhere('gender.id = any', { ids: ['1', '2'] });
-
+            query.andWhere('profile.firstName ILIKE :firstName', {firstName: `%${data.search}%`,})
+            query.andWhere('profile.secondName ILIKE :secondName', {secondName: `%${data.search}%`})
         }
         if (data?.kids === false) {
             query.andWhere('profile.kids = :amount', {amount: 0});
         }
         if (data?.kids) {
-            query.andWhere('profile.kids <> :amount', {amount: 0});
+            query.andWhere('profile.kids <> :amountK', {amountK: 0});
         }
-        // console.log(profile.gender)
-        // console.log(profile.gender.id === 1 ? 2 : 1)
-        console.log(query.getSql())
         const profiles = await query.getMany();
         const count = await query.getCount();
         return {profiles, count};
@@ -325,7 +272,7 @@ export class ProfileService {
         const profile = await this.profileRepository.findOne({id});
         const workerProfile = await this.profileRepository.findOne({where: {user: {id: workerId}}})
         const block = await this.blockRepository.findOne({where: {userProfile: profile}})
-        block.block =  !block.block
+        block.block = !block.block
         block.text = text
         block.workerProfile = workerProfile
         await this.blockRepository.save(block)

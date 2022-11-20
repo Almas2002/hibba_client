@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Put } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { MessagePattern } from '@nestjs/microservices';
 import { CreateRoleDto } from './dto/create-role.dto';
 
 @Controller()

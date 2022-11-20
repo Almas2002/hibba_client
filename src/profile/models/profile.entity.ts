@@ -19,6 +19,8 @@ import {User} from '../../user/user.entity';
 import {Region} from '../../region/region.entity';
 import {Place} from "./place.entity";
 import {Block} from "./block.entity";
+import {Posts} from "../../posts/entity/posts.entity";
+import {PostLike} from "../../posts/entity/post-like.entity";
 
 
 @Entity()
@@ -87,5 +89,10 @@ export class Profile extends BaseEntity {
 
     @OneToOne(() => Block, block => block.workerProfile)
     myBlocks: Block[]
+
+    @OneToMany(()=>Posts,post=>post.profile)
+    posts:Posts[]
+    @OneToMany(()=>PostLike,like=>like.profile)
+    postLikes:PostLike[]
 
 }

@@ -19,6 +19,7 @@ import {NotificationModule} from "./notification/notification.module";
 import {ChatModule} from "./chat/chat.module";
 import {PushNotificationModule} from "./pushNotification/pushNotification.module";
 import {HadisModule} from "./hadis/hadis.module";
+import {PostsModule} from "./posts/posts.module";
 
 require('dotenv').config();
 
@@ -44,7 +45,7 @@ require('dotenv').config();
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname,'static'),
     }), AuthModule, UserModule, FileModule, HobbyModule, CategoryModule,
-    ProfileModule, RoleModule, ReligionModule, GenderModule, ComplaintModule, RegionModule,NotificationModule,ChatModule,PushNotificationModule,HadisModule
+    ProfileModule, RoleModule, ReligionModule, GenderModule, ComplaintModule, RegionModule,NotificationModule,ChatModule,PushNotificationModule,HadisModule,PostsModule
   ],
   controllers: [],
   providers: [],
