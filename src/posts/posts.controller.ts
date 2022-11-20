@@ -1,5 +1,5 @@
 import {Body, Controller, Get, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors} from "@nestjs/common";
-import {ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {PostsService} from "./service/posts.service";
 import {PostLikeService} from "./service/post-like.service";
 import {CommentService} from "./service/comment.service";
@@ -10,6 +10,7 @@ import {FileFieldsInterceptor} from "@nestjs/platform-express";
 import {CreateCommentDto, QueryCommentsFilter} from "./dto/comment.dto";
 import {CreateLikeDto} from "./dto/like.dto";
 import {PostException} from "./exceptions/post.exception";
+import {ApiImplicitFile} from "@nestjs/swagger/dist/decorators/api-implicit-file.decorator";
 
 @ApiTags('посты')
 @Controller('posts')
@@ -49,11 +50,31 @@ export class PostsController {
             ]
         }
     })
+    @ApiResponse({
+        status: 401, schema: {
+            oneOf: [
+                {
+                    properties: {
+                        message: {
+                            type: 'string',
+                            example: 'фотография не может быть пустым',
+                        },
+                        status: {
+                            type: 'number',
+                            example: 422,
+                        }
+                    }
+                }
+            ]
+        }
+    })
+    @ApiBearerAuth('defaultBearerAuth')
+    @ApiImplicitFile({ name: 'file', description: 'фото для постов' })
     @UseGuards(AuthGuard)
     @UseInterceptors(FileFieldsInterceptor(([{name: 'file', maxCount: 10}])))
     @Post()
     createPost(@Body()dto: CreatePostDto, @UserDecorator('id')id: number, @UploadedFiles()files: { file: any[] }) {
-        return this.postService.create(dto, id, files.file)
+        return this.postService.create(dto, id, files?.file)
     }
 
     @ApiQuery({name: 'limit', example: 10, required: false})
@@ -63,7 +84,7 @@ export class PostsController {
     getPostList(@Query()query: QueryPostFilter, @Req()req) {
         return this.postService.getList(query, req.user?.id)
     }
-
+    @ApiBearerAuth('defaultBearerAuth')
     @ApiCreatedResponse({
         schema: {
             oneOf: [
@@ -114,6 +135,28 @@ export class PostsController {
             ]
         }
     })
+    @ApiResponse({
+        status: 422, schema: {
+            oneOf: [
+                {
+                    properties: {
+                        postId: {
+                            type: 'array',
+                            example: [
+                                "postId should not be empty"
+                            ],
+                        },
+                        comment: {
+                            type: 'array',
+                            example: [
+                                "comment should not be empty"
+                            ],
+                        }
+                    }
+                }
+            ]
+        }
+    })
     @UseGuards(AuthGuard)
     @Post("comments")
     createComment(@Body()dto: CreateCommentDto, @UserDecorator('id')id: number,) {
@@ -128,7 +171,7 @@ export class PostsController {
     commentsList(@Query()query: QueryCommentsFilter) {
         return this.commentService.listComments(query)
     }
-    
+    @ApiBearerAuth('defaultBearerAuth')
     @ApiResponse({
         status: 401, schema: {
             oneOf: [
@@ -159,6 +202,22 @@ export class PostsController {
                         status: {
                             type: 'number',
                             example: 404,
+                        }
+                    }
+                }
+            ]
+        }
+    })
+    @ApiResponse({
+        status: 422, schema: {
+            oneOf: [
+                {
+                    properties: {
+                        postId: {
+                            type: 'array',
+                            example: [
+                                "postId should not be empty"
+                            ],
                         }
                     }
                 }

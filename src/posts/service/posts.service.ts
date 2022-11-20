@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {HttpException, Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Posts} from "../entity/posts.entity";
 import {Repository} from "typeorm";
@@ -27,6 +27,8 @@ export class PostsService {
             for (let i = 0; i < files.length; i++) {
                 await this.profileService.createImagePost(post, await this.fileService.createFile(files[i]))
             }
+        }else {
+            throw new HttpException("фотография не может быть пустым",422)
         }
         return {id: post.id}
     }
