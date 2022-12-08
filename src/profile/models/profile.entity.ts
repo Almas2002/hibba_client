@@ -21,6 +21,7 @@ import {Place} from "./place.entity";
 import {Block} from "./block.entity";
 import {Posts} from "../../posts/entity/posts.entity";
 import {PostLike} from "../../posts/entity/post-like.entity";
+import {Comment} from "../../posts/entity/comment.entity";
 
 
 @Entity()
@@ -90,9 +91,12 @@ export class Profile extends BaseEntity {
     @OneToOne(() => Block, block => block.workerProfile)
     myBlocks: Block[]
 
-    @OneToMany(()=>Posts,post=>post.profile)
+    @OneToMany(()=>Posts,post=>post.profile,{onDelete:"CASCADE"})
     posts:Posts[]
-    @OneToMany(()=>PostLike,like=>like.profile)
+    @OneToMany(()=>PostLike,like=>like.profile,{onDelete:"CASCADE"})
     postLikes:PostLike[]
+
+    @OneToMany(()=>Comment,comment=>comment.profile,{onDelete:"CASCADE"})
+    comments:Comment[]
 
 }

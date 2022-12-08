@@ -5,12 +5,22 @@ services:
     container_name: api
     build:
       context: .
-    command: npm run start
+    command: node dist/src/main.js
     restart: always
     ports:
     - "3000:3000"
     depends_on:
       - db
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DO_SPACE_ACCESS_KEY: ${DO_SPACE_ACCESS_KEY}
+      DO_SPACE_SECRET_KEY: ${DO_SPACE_SECRET_KEY}
+      DO_SPACE_ENDPOINT: ${DO_SPACE_ENDPOINT}
+      DO_SPACE_BUCKET: ${DO_SPACE_BUCKET}
   webserver:
     image: nginx:stable-alpine
     ports:
