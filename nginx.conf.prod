@@ -1,6 +1,6 @@
 server {
      listen 80;
-     server_name 128.199.40.93;
+     server_name 20.107.72.149;
      location / {
         add_header Access-Control-Allow-Origin *;
         proxy_pass http://api:3000/;
