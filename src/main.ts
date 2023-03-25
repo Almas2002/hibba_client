@@ -5,6 +5,7 @@ import * as requestIp from 'request-ip';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {MyValidationPipe} from './pipes/MyValidatorPipe';
 import * as bodyParser from 'body-parser'
+import cors from 'cors'
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -20,6 +21,7 @@ async function bootstrap() {
     })
     app.use(requestIp.mw());
     app.use(cookieParser());
+    app.use(cors())
     const config = new DocumentBuilder()
         .setTitle('Hibba')
         .setDescription('Documentation for REST API')
