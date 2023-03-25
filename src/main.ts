@@ -11,14 +11,10 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         cors: {
             origin: ["http://146.190.26.252/", "*"],
-            credentials: true
+            credentials: true,
+            methods:["GET","POST","DELETE","PATCH","OPTIONS"]
         }
     });
-    app.enableCors({
-        origin: ["*", "http://146.190.26.252/"],
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-        //credentials:true
-    })
     app.use(requestIp.mw());
     app.use(cookieParser());
     app.use(cors())
