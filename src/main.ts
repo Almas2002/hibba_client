@@ -5,7 +5,7 @@ import * as requestIp from 'request-ip';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {MyValidationPipe} from './pipes/MyValidatorPipe';
 import * as bodyParser from 'body-parser'
-import cors from 'cors'
+import * as cors from 'cors'
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
