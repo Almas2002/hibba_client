@@ -21,6 +21,8 @@ services:
       DO_SPACE_SECRET_KEY: ${DO_SPACE_SECRET_KEY}
       DO_SPACE_ENDPOINT: ${DO_SPACE_ENDPOINT}
       DO_SPACE_BUCKET: ${DO_SPACE_BUCKET}
+      ADMIN_PHONE:  ${ADMIN_PHONE}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
   webserver:
     image: nginx:stable-alpine
     ports:
