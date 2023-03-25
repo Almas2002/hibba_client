@@ -65,6 +65,7 @@ export class AuthController {
             phone: process.env.ADMIN_PHONE,
             password: process.env.ADMIN_PASSWORD,
         };
+        console.log(data)
         const response = await this.authService.registration(data, true);
         res.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
         return response;
