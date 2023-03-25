@@ -2,7 +2,7 @@ import {Body, Controller, Get, Post, Req, Res} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {AuthService} from './auth.service';
 import {UserLoginDto} from './dto/user-login.dto';
-
+require("dotenv").config()
 
 @ApiTags('Авторизация')
 @Controller('auth')
