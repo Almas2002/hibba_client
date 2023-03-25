@@ -17,7 +17,6 @@ async function bootstrap() {
     });
     app.use(requestIp.mw());
     app.use(cookieParser());
-    app.use(cors())
     const config = new DocumentBuilder()
         .setTitle('Hibba')
         .setDescription('Documentation for REST API')
