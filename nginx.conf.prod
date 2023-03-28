@@ -3,7 +3,6 @@ server {
      server_name 146.190.53.201;
      location / {
         add_header 'Access-Control-Allow-Origin' '*' always;
-        add_header 'Access-Control-Allow-Credentials' 'true' always;
         add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
         proxy_pass http://api:3000/;
         proxy_set_header        X-Real-IP       $remote_addr;
