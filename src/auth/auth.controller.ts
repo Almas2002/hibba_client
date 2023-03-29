@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Req, Res} from '@nestjs/common';
+import {Body, Controller, Get, Post, Req, Res,Request} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {AuthService} from './auth.service';
 import {UserLoginDto} from './dto/user-login.dto';
@@ -14,9 +14,9 @@ export class AuthController {
     @ApiResponse({status: 201})
     @Post('login')
     async login(@Body()data: UserLoginDto, @Res({passthrough: true})res) {
-        const response = await this.authService.login(data);
-        res.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true,secure:false,sameSite:"none"});
-        return response
+        const re =  await this.authService.login(data,);
+        res.cookie('refreshToken', re.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
+        return re.access_token
     }
 
     @ApiOperation({summary: 'registration пользователя'})
@@ -33,10 +33,10 @@ export class AuthController {
     @ApiResponse({status: 201})
     @Get('refresh')
     async refresh(@Req()request, @Res({passthrough: true})response) {
-        console.log(request.cookies)
         const {refreshToken} = request.cookies;
-        const res = await this.authService.refresh(refreshToken);
-        response.cookie('refreshToken', response.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true,secure:false,sameSite:"none"});
+        console.log(refreshToken)
+        const res = await this.authService.refresh(refreshToken,response);
+        response.cookie('refreshToken', res.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.access_token;
     }
 

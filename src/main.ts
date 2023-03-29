@@ -8,14 +8,12 @@ import * as bodyParser from 'body-parser'
 import * as cors from 'cors'
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, {
-        cors: {
-            origin:  "*",
-            credentials: true,
-            methods:["GET","POST","DELETE","PATCH","OPTIONS"]
-        }
-    });
+    const app = await NestFactory.create(AppModule, );
     app.use(requestIp.mw());
+    app.use(cors({
+        origin:"http://localhost:3000",
+        credentials: true,
+    }))
     app.use(cookieParser());
     const config = new DocumentBuilder()
         .setTitle('Hibba')

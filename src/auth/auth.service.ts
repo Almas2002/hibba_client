@@ -57,8 +57,9 @@ export class AuthService {
     private async saveToken(user: User, refresh_token: string) {
         const candidate = await this.authRepository.findOne({where: {user}});
         if (candidate) {
-
-            return await this.authRepository.update({id: candidate.id}, {refresh_token});
+            candidate.refresh_token = refresh_token
+            await this.authRepository.save(candidate)
+            return
         }
         return await this.authRepository.save({refresh_token, user});
     }
@@ -79,14 +80,14 @@ export class AuthService {
     }
 
     private async findRefreshToken(refresh_token: string) {
-        return await this.authRepository.findOne({where: {refresh_token}});
+        return await this.authRepository.findOne({where: {refresh_token:refresh_token}});
     }
 
     private verifyRefreshToken(refresh_token: string): { id: number } {
         return this.jwtService.verify(refresh_token, {secret: 'refresh'});
     }
 
-    async refresh(refresh_token,push_token?:string) {
+    async refresh(refresh_token,res:any,push_token?:string) {
         if (!refresh_token) {
             throw new UnauthorizedException({message: 'вы не загерестрированы'});
         }
@@ -104,7 +105,6 @@ export class AuthService {
         await this.userService.visit(user.id)
         const tokens = this.generationToken(user);
         await this.saveToken(user, tokens.refresh_token);
-        //res.cookie('refreshToken', tokens.refresh_token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return {...tokens};
     }
 
